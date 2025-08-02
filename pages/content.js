@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import MuxPlayer from "@mux/mux-player-react";
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
@@ -45,11 +44,11 @@ export default function ContentPage() {
                 }}
               >
                 {isAuthorized && video.playbackId ? (
-                  <MuxPlayer
-                    playbackId={video.playbackId}
-                    streamType="on-demand"
+                  <mux-player
+                    playback-id={video.playbackId}
+                    stream-type="on-demand"
                     style={{ width: "100%", height: "170px" }}
-                  />
+                  ></mux-player>
                 ) : (
                   <div
                     style={{
@@ -71,13 +70,4 @@ export default function ContentPage() {
                 )}
                 <div style={{ padding: "0.75rem" }}>
                   <strong>{video.title}</strong>
-                  <p style={{ fontSize: "0.85rem", color: "#ccc" }}>{video.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+                  <p style={{ fontSize: "0.85rem", color: "#
