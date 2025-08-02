@@ -1,12 +1,5 @@
-{
-  "name": "barracks-frontend",
-  "scripts": {
-    "dev": "next dev"
-  },
-  "dependencies": {
-    "next": "13.4.4",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "@mux/mux-player-react": "muxinc/mux-player-react"
-  }
+"dependencies": {
+  "next": "13.4.4",
+  "react": "18.2.0",
+  "react-dom": "18.2.0"
 }
