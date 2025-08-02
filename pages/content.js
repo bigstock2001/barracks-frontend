@@ -1,53 +1,83 @@
 import { useEffect, useState } from "react";
+import MuxPlayer from "@mux/mux-player-react";
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    const fetchVideos = async () => {
-      const res = await fetch("/api/videos");
-      const data = await res.json();
-      setVideos(data);
-    };
-    fetchVideos();
+    // Fetch video metadata
+    fetch("/api/videos")
+      .then((res) => res.json())
+      .then((data) => setVideos(data));
+
+    // Fetch user role from localStorage (set at login)
+    const stored = localStorage.getItem("userRole");
+    if (stored) setUserRole(stored);
   }, []);
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Video Content</h1>
-      <p style={{ marginBottom: "1rem" }}>Browse exclusive videos available to subscribers.</p>
+  const isAuthorized = userRole === "subscriber" || userRole === "paid_creator";
 
-      {videos.length === 0 ? (
-        <p>No videos found.</p>
-      ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
-          {videos.map((video) => (
-            <div
-              key={video.id}
-              style={{
-                border: "1px solid #ccc",
-                padding: "1rem",
-                borderRadius: "8px",
-                background: "#f9f9f9",
-              }}
-            >
-              <h3>{video.title}</h3>
-              <p>{video.description || "No description provided."}</p>
-              {video.thumbnail && (
-                <img src={video.thumbnail} alt={video.title} style={{ width: "100%", borderRadius: "8px" }} />
-              )}
-              {video.playbackId && (
-                <video
-                  controls
-                  width="100%"
-                  style={{ marginTop: "0.5rem", borderRadius: "8px" }}
-                  src={`https://stream.mux.com/${video.playbackId}.m3u8`}
-                />
-              )}
-            </div>
-          ))}
+  const groupedByGenre = videos.reduce((acc, video) => {
+    const genre = video.genre || "Other";
+    if (!acc[genre]) acc[genre] = [];
+    acc[genre].push(video);
+    return acc;
+  }, {});
+
+  return (
+    <div style={{ padding: "2rem", background: "#000", color: "#fff" }}>
+      <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>Welcome to Barracks Media</h1>
+
+      {Object.entries(groupedByGenre).map(([genre, vids]) => (
+        <div key={genre} style={{ marginBottom: "3rem" }}>
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{genre}</h2>
+          <div style={{ display: "flex", overflowX: "auto", gap: "1rem" }}>
+            {vids.map((video) => (
+              <div
+                key={video.id}
+                style={{
+                  minWidth: "300px",
+                  position: "relative",
+                  background: "#111",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                }}
+              >
+                {isAuthorized && video.playbackId ? (
+                  <MuxPlayer
+                    playbackId={video.playbackId}
+                    streamType="on-demand"
+                    style={{ width: "100%", height: "170px" }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "300px",
+                      height: "170px",
+                      backgroundImage: `url(${video.thumbnail || "https://via.placeholder.com/300x170"})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      filter: "blur(5px)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      fontSize: "2rem",
+                    }}
+                  >
+                    🔒
+                  </div>
+                )}
+                <div style={{ padding: "0.75rem" }}>
+                  <strong>{video.title}</strong>
+                  <p style={{ fontSize: "0.85rem", color: "#ccc" }}>{video.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
