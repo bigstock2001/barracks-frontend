@@ -1,7 +1,9 @@
+// app/content/page.js or app/content/page.tsx
+
 'use client';
 
 import { useEffect, useState } from 'react';
-import VideoPlayer from '../../components/VideoPlayer';
+import VideoPlayer from '@/components/VideoPlayer';
 
 export default function ContentPage() {
   const [video, setVideo] = useState(null);
@@ -11,31 +13,44 @@ export default function ContentPage() {
       try {
         const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=1');
         const data = await res.json();
-        const latest = data[0];
+        const post = data[0];
+
+        // Extract playback_id from post
+        const playbackId = post.playback_id;
 
         setVideo({
-          title: latest.title.rendered,
-          description: latest.content.rendered.replace(/<[^>]*>?/gm, ''), // remove HTML
-          playbackId: latest.playback_id,
-          thumbnail: latest.thumbnail_url
+          title: post.title.rendered,
+          description: post.content.rendered,
+          thumbnail: post.thumbnail_url,
+          playbackId: playbackId,
         });
-      } catch (err) {
-        console.error('Error fetching video:', err);
+      } catch (error) {
+        console.error('Error fetching video:', error);
       }
     }
 
     fetchVideo();
   }, []);
 
-  if (!video) {
-    return <p style={{ padding: '2rem' }}>Loading video...</p>;
-  }
+  if (!video) return <p>Loading video...</p>;
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{video.title}</h1>
-      <VideoPlayer playbackId={video.playbackId} />
-      <p style={{ marginTop: '1rem', fontSize: '1rem', color: '#444' }}>{video.description}</p>
+      {video.thumbnail && (
+        <img src={video.thumbnail} alt={video.title} style={{ width: '300px', borderRadius: '8px' }} />
+      )}
+
+      <h2 style={{ marginTop: '1rem', fontWeight: 'bold' }}>{video.title}</h2>
+      <div
+        dangerouslySetInnerHTML={{ __html: video.description }}
+        style={{ marginTop: '0.5rem', marginBottom: '1rem' }}
+      />
+
+      {video.playbackId ? (
+        <VideoPlayer playbackId={video.playbackId} />
+      ) : (
+        <p>No video available</p>
+      )}
     </div>
   );
 }
