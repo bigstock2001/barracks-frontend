@@ -3,6 +3,8 @@
 import { MuxPlayer } from '@mux/mux-player-react';
 
 export default function VideoPlayer({ playbackId }) {
+  console.log("Rendering MuxPlayer for playbackId:", playbackId);
+
   if (!playbackId) return <p>No video found.</p>;
 
   return (
@@ -19,9 +21,4 @@ export default function VideoPlayer({ playbackId }) {
           height: 'auto',
           borderRadius: '8px',
           maxWidth: '800px',
-          margin: '0 auto',
-        }}
-      />
-    </div>
-  );
-}
+          margin: '0
