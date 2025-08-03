@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import VideoPlayer from '@/components/VideoPlayer';
-
+import VideoPlayer from '../../components/VideoPlayer';
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
 
