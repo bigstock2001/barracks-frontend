@@ -10,7 +10,7 @@ export default function ContentPage() {
     async function fetchVideos() {
       const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
       const data = await res.json();
-      console.log("Video Data:", data); // Optional: Remove after debugging
+      console.log("Video Data:", data);
       setVideos(data);
     }
     fetchVideos();
@@ -35,3 +35,11 @@ export default function ContentPage() {
               />
               {video.playback_id && (
                 <VideoPlayer playbackId={video.playback_id} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
