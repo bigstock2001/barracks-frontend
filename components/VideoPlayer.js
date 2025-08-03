@@ -1,7 +1,17 @@
-export default function VideoPlayer() {
+'use client';
+
+import MuxPlayer from '@mux/mux-player-react';
+
+export default function VideoPlayer({ playbackId }) {
+  if (!playbackId) return <p>No playback ID provided</p>;
+
   return (
-    <div style={{ backgroundColor: '#000', color: '#fff', padding: '2rem', textAlign: 'center' }}>
-      Video Player Placeholder
-    </div>
+    <MuxPlayer
+      playbackId={playbackId}
+      streamType="on-demand"
+      autoPlay={false}
+      muted
+      style={{ width: '100%', maxWidth: '800px', borderRadius: '12px' }}
+    />
   );
 }
