@@ -1,51 +1,35 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import VideoPlayer from '@/components/VideoPlayer';
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
     async function fetchVideos() {
-      try {
-        const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100&_fields=title.rendered,content.rendered,thumbnail_url,playback_id');
-        const data = await res.json();
-
-        const formatted = data.map(post => ({
-          title: post.title.rendered,
-          description: post.content?.rendered || '',
-          thumbnail: post.thumbnail_url,
-          playbackId: post.playback_id,
-        }));
-
-        setVideos(formatted);
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      }
+      const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
+      const data = await res.json();
+      setVideos(data);
     }
-
     fetchVideos();
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {videos.map((video, index) => (
-        <div key={index} className="bg-white shadow-lg rounded-xl overflow-hidden">
-          <mux-player
-            playback-id={video.playbackId}
-            stream-type="on-demand"
-            controls
-            style={{ width: '100%', aspectRatio: '16 / 9' }}
-          ></mux-player>
-          <div className="p-4">
-            <h3 className="text-lg font-bold mb-2">{video.title}</h3>
-            <div
-              className="text-sm text-gray-700"
-              dangerouslySetInnerHTML={{ __html: video.description }}
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-4">Video Content</h1>
+      <p className="mb-6">Browse exclusive videos available to subscribers.</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {videos.map((video) => (
+          <div key={video.id} className="bg-white shadow-md rounded-lg p-4">
+            <h2
+              className="text-xl font-semibold mb-2"
+              dangerouslySetInnerHTML={{ __html: video.title.rendered }}
             />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+            <p className="text-sm text-gray-600 mb-2">
+              {video.acf?.description || 'No description provided.'}
+            </p>
+            {video.acf?.playback_id && (
+              <VideoPlayer playbackId={video.acf.playback_id} />
+            )}
