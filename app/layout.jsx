@@ -7,7 +7,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script src="https://unpkg.com/@mux/mux-player" defer></script>
+        <script
+          src="https://unpkg.com/@mux/mux-player"
+          type="module"
+          defer
+        ></script>
       </head>
       <body>{children}</body>
     </html>
