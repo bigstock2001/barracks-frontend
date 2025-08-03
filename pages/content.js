@@ -1,89 +1,32 @@
-import { useEffect, useState } from "react";
+// pages/content.js
+import React, { useEffect, useState } from 'react';
 
-export default function ContentPage() {
+export default function Content() {
   const [videos, setVideos] = useState([]);
-  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    fetch("/api/videos")
-      .then((res) => res.json())
-      .then((data) => setVideos(data));
-
-    const stored = localStorage.getItem("userRole");
-    if (stored) setUserRole(stored);
+    async function fetchVideos() {
+      const res = await fetch('/api/videos');
+      const data = await res.json();
+      setVideos(data);
+    }
+    fetchVideos();
   }, []);
 
-  const isAuthorized = userRole === "subscriber" || userRole === "paid_creator";
-
-  const groupedByGenre = videos.reduce((acc, video) => {
-    const genre = video.genre || "Other";
-    if (!acc[genre]) acc[genre] = [];
-    acc[genre].push(video);
-    return acc;
-  }, {});
-
   return (
-    <div style={{ padding: "2rem", background: "#000", color: "#fff" }}>
-      <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>
-        Welcome to Barracks Media
-      </h1>
-
-      {Object.entries(groupedByGenre).map(([genre, vids]) => (
-        <div key={genre} style={{ marginBottom: "3rem" }}>
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{genre}</h2>
-          <div style={{ display: "flex", overflowX: "auto", gap: "1rem" }}>
-            {vids.map((video) => (
-              <div
-                key={video.id}
-                style={{
-                  minWidth: "300px",
-                  position: "relative",
-                  background: "#111",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
-                {isAuthorized && video.playbackId ? (
-                  <video
-                    controls
-                    width="100%"
-                    height="170"
-                    poster={video.thumbnail}
-                    style={{ objectFit: "cover" }}
-                  >
-                    <source
-                      src={`https://stream.mux.com/${video.playbackId}.m3u8`}
-                      type="application/x-mpegURL"
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : (
-                  <div
-                    style={{
-                      width: "300px",
-                      height: "170px",
-                      backgroundImage: `url(${video.thumbnail || "https://via.placeholder.com/300x170"})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      filter: "blur(5px)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      fontSize: "2rem",
-                    }}
-                  >
-                    🔒
-                  </div>
-                )}
-                <div style={{ padding: "0.75rem" }}>
-                  <strong>{video.title}</strong>
-                  <p style={{ fontSize: "0.85rem", color: "#ccc" }}>
-                    {video.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+    <div style={{ padding: '2rem' }}>
+      <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Featured Content</h1>
+      {videos.map((video) => (
+        <div key={video.id} style={{ marginBottom: '2rem' }}>
+          <mux-player
+            playback-id={video.playback_id}
+            stream-type="on-demand"
+            controls
+            style={{ width: '100%', height: 'auto', borderRadius: '12px' }}
+          ></mux-player>
+          <div style={{ padding: '0.75rem' }}>
+            <strong>{video.title}</strong>
+            <p style={{ fontSize: '0.85rem', color: '#888888' }}>{video.description}</p>
           </div>
         </div>
       ))}
