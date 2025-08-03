@@ -1,14 +1,14 @@
-'use client';
-import '@mux/mux-player';
+// pages/api/videos.js
+export default async function handler(req, res) {
+  const response = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/videos');
+  const data = await response.json();
 
-export default function VideoPlayer({ playbackId }) {
-  return (
-    <mux-player
-      playback-id={playbackId}
-      stream-type="on-demand"
-      primary-color="#fbbf24"
-      metadata-video-title="Barracks Media"
-      style={{ width: '100%', aspectRatio: '16 / 9', borderRadius: '12px' }}
-    />
-  );
+  const formatted = data.map((item) => ({
+    id: item.id,
+    title: item.title.rendered,
+    description: item.excerpt.rendered.replace(/<[^>]+>/g, ''),
+    playback_id: item.meta?.mux_playback_id || '',
+  }));
+
+  res.status(200).json(formatted);
 }
