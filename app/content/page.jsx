@@ -1,66 +1,51 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import VideoPlayer from '@/components/VideoPlayer';
-
-interface VideoData {
-  title: string;
-  description: string;
-  thumbnail: string;
-  playbackId: string;
-}
 
 export default function ContentPage() {
-  const [video, setVideo] = useState<VideoData | null>(null);
+  const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    async function fetchVideo() {
+    async function fetchVideos() {
       try {
-        const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=1&_fields=title,content,thumbnail_url,meta');
+        const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100&_fields=title.rendered,content.rendered,thumbnail_url,playback_id');
         const data = await res.json();
-        const post = data[0];
 
-        // Safely extract the playback ID
-        const playbackId = post.meta?.playback_id || '';
-
-        setVideo({
+        const formatted = data.map(post => ({
           title: post.title.rendered,
-          description: post.content.rendered,
+          description: post.content?.rendered || '',
           thumbnail: post.thumbnail_url,
-          playbackId,
-        });
+          playbackId: post.playback_id,
+        }));
+
+        setVideos(formatted);
       } catch (error) {
-        console.error('Error fetching video:', error);
+        console.error('Error fetching videos:', error);
       }
     }
 
-    fetchVideo();
+    fetchVideos();
   }, []);
 
-  if (!video) return <p>Loading video...</p>;
-
   return (
-    <div style={{ padding: '2rem' }}>
-      {video.thumbnail && (
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          style={{ width: '300px', borderRadius: '8px' }}
-        />
-      )}
-
-      <h2 style={{ marginTop: '1rem', fontWeight: 'bold' }}>{video.title}</h2>
-
-      <div
-        dangerouslySetInnerHTML={{ __html: video.description }}
-        style={{ marginTop: '0.5rem', marginBottom: '1rem' }}
-      />
-
-      {video.playbackId ? (
-        <VideoPlayer playbackId={video.playbackId} />
-      ) : (
-        <p>No video available</p>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      {videos.map((video, index) => (
+        <div key={index} className="bg-white shadow-lg rounded-xl overflow-hidden">
+          <mux-player
+            playback-id={video.playbackId}
+            stream-type="on-demand"
+            controls
+            style={{ width: '100%', aspectRatio: '16 / 9' }}
+          ></mux-player>
+          <div className="p-4">
+            <h3 className="text-lg font-bold mb-2">{video.title}</h3>
+            <div
+              className="text-sm text-gray-700"
+              dangerouslySetInnerHTML={{ __html: video.description }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
