@@ -5,12 +5,10 @@ export default function ContentPage() {
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    // Fetch video metadata
     fetch("/api/videos")
       .then((res) => res.json())
       .then((data) => setVideos(data));
 
-    // Fetch user role from localStorage (set at login)
     const stored = localStorage.getItem("userRole");
     if (stored) setUserRole(stored);
   }, []);
@@ -26,7 +24,9 @@ export default function ContentPage() {
 
   return (
     <div style={{ padding: "2rem", background: "#000", color: "#fff" }}>
-      <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>Welcome to Barracks Media</h1>
+      <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>
+        Welcome to Barracks Media
+      </h1>
 
       {Object.entries(groupedByGenre).map(([genre, vids]) => (
         <div key={genre} style={{ marginBottom: "3rem" }}>
@@ -44,11 +44,19 @@ export default function ContentPage() {
                 }}
               >
                 {isAuthorized && video.playbackId ? (
-                  <mux-player
-                    playback-id={video.playbackId}
-                    stream-type="on-demand"
-                    style={{ width: "100%", height: "170px" }}
-                  ></mux-player>
+                  <video
+                    controls
+                    width="100%"
+                    height="170"
+                    poster={video.thumbnail}
+                    style={{ objectFit: "cover" }}
+                  >
+                    <source
+                      src={`https://stream.mux.com/${video.playbackId}.m3u8`}
+                      type="application/x-mpegURL"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
                 ) : (
                   <div
                     style={{
@@ -70,4 +78,15 @@ export default function ContentPage() {
                 )}
                 <div style={{ padding: "0.75rem" }}>
                   <strong>{video.title}</strong>
-                  <p style={{ fontSize: "0.85rem", color: "#
+                  <p style={{ fontSize: "0.85rem", color: "#ccc" }}>
+                    {video.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
