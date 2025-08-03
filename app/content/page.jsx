@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import VideoPlayer from '../../components/VideoPlayer';
+
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-  async function fetchVideos() {
-    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
-    const data = await res.json();
-    console.log("Video Data:", data); // ← Add this line
-    setVideos(data);
-  }
-  fetchVideos();
-}, []);
-
+    async function fetchVideos() {
+      const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
+      const data = await res.json();
+      console.log("Video Data:", data);
+      setVideos(data);
+    }
+    fetchVideos();
+  }, []);
 
   return (
     <div className="p-8">
@@ -28,12 +28,12 @@ export default function ContentPage() {
               className="text-xl font-semibold mb-2"
               dangerouslySetInnerHTML={{ __html: video.title.rendered }}
             />
-            <p className="text-sm text-gray-600 mb-2">
-              {video.acf?.description || 'No description provided.'}
-            </p>
-{video.playback_id && (
-  <VideoPlayer playbackId={video.playback_id} />
-)}
+            <p
+              className="text-sm text-gray-600 mb-2"
+              dangerouslySetInnerHTML={{ __html: video.content.rendered }}
+            />
+            {video.playback_id && (
+              <VideoPlayer playbackId={video.playback_id} />
             )}
           </div>
         ))}
