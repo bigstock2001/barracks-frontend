@@ -10,7 +10,7 @@ export default function ContentPage() {
     async function fetchVideos() {
       const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
       const data = await res.json();
-      console.log("Video Data:", data);
+      console.log("Fetched videos:", data); // Debug all data
       setVideos(data);
     }
     fetchVideos();
@@ -23,23 +23,4 @@ export default function ContentPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {videos.map((video) => {
-          return (
-            <div key={video.id} className="bg-white shadow-md rounded-lg p-4">
-              <h2
-                className="text-xl font-semibold mb-2"
-                dangerouslySetInnerHTML={{ __html: video.title.rendered }}
-              />
-              <p
-                className="text-sm text-gray-600 mb-2"
-                dangerouslySetInnerHTML={{ __html: video.content.rendered }}
-              />
-              {video.playback_id && (
-                <VideoPlayer playbackId={video.playback_id} />
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+          console.log("Playback ID:", video.playback_id); // ✅ Log each playbackId
