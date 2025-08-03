@@ -1,6 +1,8 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // Optional but helps clarify it's server code
+
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
@@ -15,15 +17,13 @@ export async function GET() {
 
     const text = await res.text();
 
-    // Try to parse JSON safely
     let data;
     try {
       data = JSON.parse(text);
-    } catch (parseError) {
+    } catch {
       throw new Error('Response was not valid JSON');
     }
 
-    // Sanity check
     if (!Array.isArray(data)) {
       throw new Error('Expected an array of videos');
     }

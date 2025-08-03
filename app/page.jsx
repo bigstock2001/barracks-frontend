@@ -8,7 +8,7 @@ export default function ContentPage() {
   useEffect(() => {
     async function fetchVideos() {
       try {
-        const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video');
+        const res = await fetch('/api/videos'); // use your headless API
         const data = await res.json();
         setVideos(data);
       } catch (err) {
@@ -29,22 +29,22 @@ export default function ContentPage() {
             key={video.id}
             className="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105"
           >
-            {video.thumbnail_url && (
+            {video.thumbnail && (
               <img
-                src={video.thumbnail_url}
-                alt={video.title.rendered}
+                src={video.thumbnail}
+                alt={video.title}
                 className="w-full h-48 object-cover"
               />
             )}
 
             <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{video.title.rendered}</h2>
+              <h2 className="text-xl font-semibold mb-2">{video.title}</h2>
 
-              {video.playback_id ? (
+              {video.playbackId ? (
                 <mux-player
-                  playback-id={video.playback_id}
+                  playback-id={video.playbackId}
                   stream-type="on-demand"
-                  metadata-video-title={video.title.rendered}
+                  metadata-video-title={video.title}
                   class="w-full h-60 rounded"
                   primary-color="#c62828"
                   accent-color="#222"
@@ -53,12 +53,9 @@ export default function ContentPage() {
                 <p className="text-red-500">No video available.</p>
               )}
 
-              <div
-                className="mt-2 text-sm text-gray-700"
-                dangerouslySetInnerHTML={{
-                  __html: video.content?.rendered || '<p>No description.</p>',
-                }}
-              />
+              <div className="mt-2 text-sm text-gray-700">
+                {video.description || 'No description.'}
+              </div>
             </div>
           </div>
         ))}
