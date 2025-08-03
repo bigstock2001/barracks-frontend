@@ -33,3 +33,9 @@ export default function ContentPage() {
             {video.acf?.playback_id && (
               <VideoPlayer playbackId={video.acf.playback_id} />
             )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
