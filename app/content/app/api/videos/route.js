@@ -1,21 +1,35 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
-    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100');
-    
+    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
     if (!res.ok) {
-      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+      throw new Error(`Fetch failed with status: ${res.status}`);
     }
 
-    const data = await res.json();
+    const text = await res.text();
 
-    // Confirm the data is an array — otherwise `map` will fail
+    // Try to parse JSON safely
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      throw new Error('Response was not valid JSON');
+    }
+
+    // Sanity check
     if (!Array.isArray(data)) {
-      throw new Error('Data is not an array');
+      throw new Error('Expected an array of videos');
     }
 
     return NextResponse.json(data);
+
   } catch (err) {
     console.error('Error in /api/videos:', err);
     return new Response(JSON.stringify({ error: err.message }), {
