@@ -1,21 +1,26 @@
+import { NextResponse } from 'next/server';
+
 export async function GET() {
-  const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100&_embed', {
-    next: { revalidate: 60 },
-  });
+  try {
+    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100');
+    
+    if (!res.ok) {
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    }
 
-  const rawData = await res.json();
-  const data = Array.isArray(rawData) ? rawData : [rawData]; // ✅ Ensure it's always an array
+    const data = await res.json();
 
-  const videos = data.map(video => ({
-    id: video.id,
-    title: video.title.rendered,
-    description: video.acf?.description || 'No description provided.',
-    genre: video.acf?.genre || '',
-    playbackId: video.playback_id || '',
-    thumbnail: video.thumbnail_url || '',
-  }));
+    // Confirm the data is an array — otherwise `map` will fail
+    if (!Array.isArray(data)) {
+      throw new Error('Data is not an array');
+    }
 
-  return new Response(JSON.stringify(videos), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+    return NextResponse.json(data);
+  } catch (err) {
+    console.error('Error in /api/videos:', err);
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
