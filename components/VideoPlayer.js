@@ -21,4 +21,9 @@ export default function VideoPlayer({ playbackId }) {
           height: 'auto',
           borderRadius: '8px',
           maxWidth: '800px',
-          margin: '0
+          margin: '0 auto',
+        }}
+      />
+    </div>
+  );
+}
