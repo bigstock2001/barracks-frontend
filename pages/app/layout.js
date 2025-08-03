@@ -3,7 +3,7 @@ export const metadata = {
   description: "On-demand video and audio content platform",
 };
 
-export default function Layout({ children }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
