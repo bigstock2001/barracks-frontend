@@ -6,13 +6,15 @@ export default function ContentPage() {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    async function fetchVideos() {
-      const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
-      const data = await res.json();
-      setVideos(data);
-    }
-    fetchVideos();
-  }, []);
+  async function fetchVideos() {
+    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=10&_embed');
+    const data = await res.json();
+    console.log("Video Data:", data); // ← Add this line
+    setVideos(data);
+  }
+  fetchVideos();
+}, []);
+
 
   return (
     <div className="p-8">
