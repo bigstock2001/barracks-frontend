@@ -31,8 +31,9 @@ export default function ContentPage() {
             <p className="text-sm text-gray-600 mb-2">
               {video.acf?.description || 'No description provided.'}
             </p>
-            {video.acf?.playback_id && (
-              <VideoPlayer playbackId={video.acf.playback_id} />
+            {video.playback_id && (
+  <VideoPlayer playbackId={video.playback_id} />
+)}
             )}
           </div>
         ))}
