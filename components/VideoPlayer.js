@@ -1,23 +1,32 @@
 'use client';
 
+import '@mux/mux-player-react';
+import { MuxPlayer } from '@mux/mux-player-react';
+
 export default function VideoPlayer({ playbackId }) {
-  if (!playbackId) return <p>No video found.</p>;
+  if (!playbackId) {
+    return <p>No video found.</p>;
+  }
 
   return (
-    <div style={{ marginTop: '2rem' }}>
-      <mux-player
-        playback-id={playbackId}
-        stream-type="on-demand"
-        metadata-video-id={playbackId}
-        metadata-video-title="Barracks Media Video"
+    <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+      <MuxPlayer
+        playbackId={playbackId}
+        streamType="on-demand"
+        autoPlay={false}
+        controls
+        primaryColor="#ff4d4d"
+        metadata={{
+          video_title: 'Barracks Media Video',
+          viewer_user_id: 'viewer123',
+        }}
         style={{
           width: '100%',
-          height: 'auto',
-          borderRadius: '8px',
           maxWidth: '800px',
-          margin: '0 auto',
+          height: 'auto',
+          borderRadius: '10px',
         }}
-      ></mux-player>
+      />
     </div>
   );
 }
