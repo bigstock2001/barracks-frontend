@@ -1,40 +1,26 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
-
-import { NextResponse } from 'next/server';
-
 export async function GET() {
   try {
-    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
-      headers: { 'Accept': 'application/json' },
+    const response = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
+      headers: {
+        'Accept': 'application/json',
+      },
+      // If the server blocks bots, add a User-Agent:
+      next: { revalidate: 3600 }, // Optional: Enables ISR on Vercel
     });
 
-    if (!res.ok) {
-      throw new Error(`Fetch failed with status: ${res.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch: ${response.statusText}`);
     }
 
-    const rawText = await res.text();
-
-    console.log("✅ Raw response from WordPress:");
-    console.log(rawText);
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      console.error("❌ JSON parse failed", e);
-      return NextResponse.json({ error: "Invalid JSON from backend" }, { status: 500 });
-    }
-
-    if (!Array.isArray(data)) {
-      console.error("❌ Expected an array but got:", typeof data, data);
-      return NextResponse.json({ error: "Expected array from backend" }, { status: 500 });
-    }
-
-    console.log("✅ Parsed video data count:", data.length);
-    return NextResponse.json(data);
-  } catch (err) {
-    console.error('🔥 Error in /api/videos route:', err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const data = await response.json();
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
