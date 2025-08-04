@@ -9,30 +9,32 @@ export async function GET() {
       headers: { 'Accept': 'application/json' },
     });
 
-    const text = await res.text();
+    if (!res.ok) {
+      throw new Error(`Fetch failed with status: ${res.status}`);
+    }
 
-    console.log('Raw response:', text); // 🪵 LOG TO VERCEL
+    const rawText = await res.text();
+
+    console.log("✅ Raw response from WordPress:");
+    console.log(rawText);
 
     let data;
     try {
-      data = JSON.parse(text);
-    } catch (err) {
-      console.error('JSON parse error:', err.message);
-      throw new Error('Invalid JSON from backend');
+      data = JSON.parse(rawText);
+    } catch (e) {
+      console.error("❌ JSON parse failed", e);
+      return NextResponse.json({ error: "Invalid JSON from backend" }, { status: 500 });
     }
 
     if (!Array.isArray(data)) {
-      console.error('Data is not an array:', typeof data);
-      throw new Error('Expected an array of videos');
+      console.error("❌ Expected an array but got:", typeof data, data);
+      return NextResponse.json({ error: "Expected array from backend" }, { status: 500 });
     }
 
+    console.log("✅ Parsed video data count:", data.length);
     return NextResponse.json(data);
-
   } catch (err) {
-    console.error('API /api/videos failed:', err.message);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.error('🔥 Error in /api/videos route:', err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
