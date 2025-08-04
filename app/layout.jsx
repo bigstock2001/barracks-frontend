@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
             <li><a href="/upload">Upload</a></li>
             <li><a href="/upload/manage">Manage</a></li>
             <li><a href="/audiobooks">Audiobooks</a></li>
+            <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/account">Account</a></li>
             <li><a href="/test-api">Test API</a></li>
