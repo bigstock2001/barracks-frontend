@@ -1,4 +1,3 @@
-// app/api/videos/route.js
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
@@ -10,21 +9,22 @@ export async function GET() {
       headers: { 'Accept': 'application/json' },
     });
 
-    if (!res.ok) {
-      throw new Error(`Fetch failed with status: ${res.status}`);
+    if (!res.ok) throw new Error(`Fetch failed with status: ${res.status}`);
+
+    const text = await res.text();
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error('Response was not valid JSON');
     }
 
-    const data = await res.json();
-
-    if (!Array.isArray(data)) {
-      console.error('🚨 Not an array:', data);
-      throw new Error('Expected an array of videos');
-    }
+    if (!Array.isArray(data)) throw new Error('Expected an array of videos');
 
     return NextResponse.json(data);
-    
   } catch (err) {
-    console.error('🔥 Error in /api/videos:', err);
+    console.error('Error in /api/videos:', err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
