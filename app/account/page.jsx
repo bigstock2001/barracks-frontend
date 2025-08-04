@@ -8,22 +8,51 @@ export default function AccountPage() {
   const [viewStats, setViewStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [heroesDiscount, setHeroesDiscount] = useState(false);
+
+  // Stripe price IDs (replace with your actual price IDs)
+  const pricingPlans = {
+    starter: {
+      priceId: 'price_starter_monthly',
+      name: 'Starter Creator',
+      price: 9.99,
+      features: ['Up to 1GB uploads', '10 videos/month', 'Basic analytics', 'Community support']
+    },
+    pro: {
+      priceId: 'price_pro_monthly', 
+      name: 'Pro Creator',
+      price: 19.99,
+      features: ['Up to 3GB uploads', '50 videos/month', 'Advanced analytics', 'Priority support', 'Custom thumbnails']
+    },
+    premium: {
+      priceId: 'price_premium_monthly',
+      name: 'Premium Creator', 
+      price: 29.99,
+      features: ['Unlimited uploads', 'Unlimited videos', 'Full analytics suite', 'Priority support', 'Custom branding', 'API access']
+    }
+  };
 
   // Mock user data - in real app, this would come from your auth system
   useEffect(() => {
+    // Load Stripe.js
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/';
+    script.async = true;
+    document.body.appendChild(script);
+
     // Simulate loading user data
     setTimeout(() => {
       setUser({
         name: 'John Creator',
         email: 'john@example.com',
         joinDate: '2024-01-15',
-        tier: 'premium'
+        tier: 'free' // Changed to free to show upgrade options
       });
 
       setSubscription({
-        status: 'active',
-        plan: 'Premium Creator',
-        price: 29.99,
+        status: 'inactive',
+        plan: 'Free Tier',
+        price: 0,
         nextBilling: '2024-02-15',
         customerId: 'cus_example123'
       });
@@ -51,7 +80,40 @@ export default function AccountPage() {
 
       setLoading(false);
     }, 1000);
+
+    return () => {
+      const existingScript = document.querySelector('script[src="https://js.stripe.com/v3/"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+    };
   }, []);
+
+  const handleSubscribe = async (planKey) => {
+    try {
+      const plan = pricingPlans[planKey];
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: plan.priceId,
+          customerEmail: user.email,
+          heroesDiscount,
+        }),
+      });
+
+      const { sessionId } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      const stripe = window.Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to start checkout. Please try again.');
+    }
+  };
 
   const handleManageSubscription = async () => {
     try {
@@ -148,11 +210,11 @@ export default function AccountPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Status</span>
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    subscription.status === 'active' 
+                    subscription.status === 'active'
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-red-100 text-red-800'
                   }`}>
-                    {subscription.status === 'active' ? '✅ Active' : '❌ Inactive'}
+                    {subscription.status === 'active' ? '✅ Active' : '🆓 Free Tier'}
                   </span>
                 </div>
                 
@@ -163,24 +225,125 @@ export default function AccountPage() {
                 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Price</span>
-                  <span className="font-semibold text-gray-900">${subscription.price}/month</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Next Billing</span>
-                  <span className="text-gray-900">
-                    {new Date(subscription.nextBilling).toLocaleDateString()}
+                  <span className="font-semibold text-gray-900">
+                    {subscription.price === 0 ? 'Free' : `$${subscription.price}/month`}
                   </span>
                 </div>
+                
+                {subscription.status === 'active' && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Next Billing</span>
+                    <span className="text-gray-900">
+                      {new Date(subscription.nextBilling).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              <button
-                onClick={handleManageSubscription}
-                className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Manage Subscription
-              </button>
+              {subscription.status === 'active' ? (
+                <button
+                  onClick={handleManageSubscription}
+                  className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Manage Subscription
+                </button>
+              ) : (
+                <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center mb-2">
+                    <svg className="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-yellow-800 font-medium">Free Tier Limitations</p>
+                  </div>
+                  <ul className="text-yellow-700 text-sm space-y-1">
+                    <li>• 2GB max file size</li>
+                    <li>• 1 video upload only</li>
+                    <li>• No profit sharing</li>
+                    <li>• Basic support</li>
+                  </ul>
+                </div>
+              )}
             </div>
+
+            {/* Upgrade Plan Section - Only show for free tier users */}
+            {user.tier === 'free' && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">🚀 Upgrade Your Plan</h2>
+                <p className="text-gray-600 mb-6">
+                  Unlock unlimited uploads, profit sharing, and premium features!
+                </p>
+                
+                <div className="flex items-center mb-6">
+                  <input
+                    type="checkbox"
+                    id="heroesDiscountAccount"
+                    checked={heroesDiscount}
+                    onChange={(e) => setHeroesDiscount(e.target.checked)}
+                    className="mr-3"
+                  />
+                  <label htmlFor="heroesDiscountAccount" className="text-sm text-gray-700">
+                    I am a veteran, teacher, or first responder (30% discount)
+                  </label>
+                </div>
+
+                <div className="grid gap-4">
+                  {Object.entries(pricingPlans).map(([key, plan]) => (
+                    <div key={key} className={`border-2 rounded-lg p-4 ${key === 'pro' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
+                      {key === 'pro' && (
+                        <div className="text-center mb-2">
+                          <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                            Most Popular
+                          </span>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{plan.name}</h3>
+                          <div className="text-sm text-gray-600">
+                            <span className="text-2xl font-bold text-gray-900">
+                              ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
+                            </span>
+                            /month
+                            {heroesDiscount && (
+                              <span className="ml-2 text-green-600 font-medium text-xs">
+                                30% OFF!
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {plan.features.slice(0, 2).join(' • ')}
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={() => handleSubscribe(key)}
+                          className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            key === 'pro'
+                              ? 'bg-blue-600 text-white hover:bg-blue-700'
+                              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                          }`}
+                        >
+                          Upgrade
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                    <div>
+                      <p className="text-green-800 font-medium">Start Earning with Profit Sharing!</p>
+                      <p className="text-green-700 text-sm">Paid subscribers earn 30% of platform revenue based on performance.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-md p-6">
