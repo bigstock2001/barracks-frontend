@@ -1,9 +1,10 @@
 import AuthButtons from '../components/AuthButtons';
+import './globals.css'
 
 export const metadata = {
-  title: 'Barracks Media',
-  description: 'Video platform for subscribers',
-};
+  title: 'Barracks Media - Creator Platform',
+  description: 'Join the elite creator program and start earning with profit sharing',
+}
 
 export default function RootLayout({ children }) {
   return (
@@ -31,14 +32,11 @@ export default function RootLayout({ children }) {
           <h1 className="text-2xl font-bold">🎖 Barracks Media</h1>
           <ul className="flex space-x-6 text-lg font-medium">
             <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
-            <li><a href="/content">Content</a></li>
-            <li><a href="/upload">Upload</a></li>
-            <li><a href="/upload/manage">Manage</a></li>
-            <li><a href="/audiobooks">Audiobooks</a></li>
+            <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
+            <li><a href="/upload" className="hover:text-yellow-400 transition-colors">Upload</a></li>
+            <li><a href="/upload/manage" className="hover:text-yellow-400 transition-colors">Manage</a></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
-            <li><a href="/blog">Blog</a></li>
-            <li><a href="/account">Account</a></li>
-            <li><a href="/test-api">Test API</a></li>
+            <li><a href="/account" className="hover:text-yellow-400 transition-colors">Account</a></li>
           </ul>
           
           {/* Auth Buttons */}
@@ -47,8 +45,8 @@ export default function RootLayout({ children }) {
           </div>
         </nav>
 
-        <main className="px-6 py-10">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
-  );
+  )
 }
