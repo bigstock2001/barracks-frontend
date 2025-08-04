@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import UploadForm from '@/components/UploadForm';
-import VideoPlayer from '@/components/VideoPlayer';
+import UploadForm from '../../components/uploadform';
+import VideoPlayer from '../../components/videoplayer';
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
