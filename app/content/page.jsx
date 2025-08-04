@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import UploadForm from '../../components/uploadform';
 import VideoPlayer from '../../components/VideoPlayer';
 
 export default function ContentPage() {
@@ -74,12 +73,10 @@ export default function ContentPage() {
 
   return (
     <div className="p-6 space-y-10">
-      <UploadForm />
-
       {videos.length === 0 ? (
         <div className="text-center text-gray-600 bg-gray-50 p-8 rounded">
           <p className="text-lg font-semibold">No videos available</p>
-          <p className="text-sm mt-2">Upload a video using the form above to get started.</p>
+          <p className="text-sm mt-2">Check back later for new content.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
