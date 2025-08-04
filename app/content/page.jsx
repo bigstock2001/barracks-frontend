@@ -13,15 +13,14 @@ export default function ContentPage() {
         const res = await fetch('/api/videos');
         const data = await res.json();
 
-        // Ensure the API returns an array
         if (Array.isArray(data)) {
           setVideos(data);
         } else {
-          console.error('Expected an array but got:', data);
+          console.error('Expected array from API, got:', data);
           setVideos([]);
         }
       } catch (err) {
-        console.error('Failed to fetch videos:', err);
+        console.error('Fetch error:', err);
         setVideos([]);
       }
     }
@@ -30,18 +29,14 @@ export default function ContentPage() {
   }, []);
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-6 space-y-10">
       <UploadForm />
-      {videos.length > 0 ? (
-        videos.map((video) => (
-          <div key={video.id} className="border p-4 rounded-md shadow">
-            <h2 className="text-xl font-semibold mb-2">{video.title}</h2>
-            <VideoPlayer playbackId={video.playback_id} />
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-500">No videos found.</p>
-      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {videos.map((video) => (
+          <VideoPlayer key={video.id} playbackId={video.playback_id} />
+        ))}
+      </div>
     </div>
   );
 }
