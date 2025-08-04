@@ -21,14 +21,21 @@ export default function ContentPage() {
         }
         
         const data = await res.json();
-        console.log('API Response:', data); // Debug log
+        console.log('API Response type:', typeof data);
+        console.log('API Response:', data);
+        console.log('Is array:', Array.isArray(data));
 
         if (Array.isArray(data)) {
           setVideos(data);
-        } else {
-          console.error('Expected array from API, got:', typeof data, data);
+        } else if (data && data.error) {
+          console.error('API returned error:', data.error);
+          setError(`API Error: ${data.error}`);
           setVideos([]);
-          setError('Invalid data format received from server');
+        } else {
+          console.error('Expected array from API, got:', typeof data);
+          console.error('Full response:', JSON.stringify(data, null, 2));
+          setVideos([]);
+          setError(`Invalid data format received from server. Expected array, got ${typeof data}. Check console for details.`);
         }
       } catch (err) {
         console.error('Failed to fetch videos:', err);
