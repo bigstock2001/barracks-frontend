@@ -15,7 +15,7 @@ export default function ContentPage() {
         setLoading(true);
         setError(null);
         
-        const res = await fetch('/api/videos');
+        const res = await fetch('/api/test-videos');
         
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
