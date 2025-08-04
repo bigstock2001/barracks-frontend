@@ -12,20 +12,44 @@ export default function ContentPage() {
   useEffect(() => {
     async function fetchVideos() {
       try {
+        console.log('=== STARTING VIDEO FETCH ===');
         setLoading(true);
         setError(null);
+        
+        console.log('Making fetch request to /api/videos');
         const res = await fetch('/api/videos');
         
+        console.log('Response status:', res.status);
+        console.log('Response ok:', res.ok);
+        console.log('Response headers:', Object.fromEntries(res.headers.entries()));
+        
         if (!res.ok) {
+          console.error('Response not ok, status:', res.status);
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         
-        const data = await res.json();
+        console.log('Getting response text first...');
+        const responseText = await res.text();
+        console.log('Raw response text:', responseText);
+        console.log('Response text length:', responseText.length);
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          console.log('Parsed JSON successfully');
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          console.error('Failed to parse response:', responseText.substring(0, 500));
+          throw new Error('Invalid JSON response from server');
+        }
+        
         console.log('API Response type:', typeof data);
         console.log('API Response:', data);
         console.log('Is array:', Array.isArray(data));
+        console.log('Data keys:', data && typeof data === 'object' ? Object.keys(data) : 'not an object');
 
         if (Array.isArray(data)) {
+          console.log('Setting videos array with length:', data.length);
           setVideos(data);
         } else if (data && data.error) {
           console.error('API returned error:', data.error);
@@ -35,13 +59,15 @@ export default function ContentPage() {
           console.error('Expected array from API, got:', typeof data);
           console.error('Full response:', JSON.stringify(data, null, 2));
           setVideos([]);
-          setError(`Invalid data format received from server. Expected array, got ${typeof data}. Check console for details.`);
+          setError(`Invalid data format: Expected array, got ${typeof data}. Raw response: ${JSON.stringify(data).substring(0, 200)}...`);
         }
       } catch (err) {
         console.error('Failed to fetch videos:', err);
+        console.error('Error stack:', err.stack);
         setVideos([]);
         setError('Failed to load videos: ' + err.message);
       } finally {
+        console.log('=== FETCH COMPLETE ===');
         setLoading(false);
       }
     }
