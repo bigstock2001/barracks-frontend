@@ -15,7 +15,7 @@ export default function BlogPage() {
   });
 
   // Admin email - change this to your email
-  const ADMIN_EMAIL = 'admin@barracksmedia.com';
+  const ADMIN_EMAIL = 'ddunn@barracksmedia.com';
 
   useEffect(() => {
     // Load user data
