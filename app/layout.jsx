@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
         >
           <h1 className="text-2xl font-bold">🎖 Barracks Media</h1>
           <ul className="flex space-x-6 text-lg font-medium">
+            <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
             <li><a href="/content">Content</a></li>
             <li><a href="/upload">Upload</a></li>
             <li><a href="/upload/manage">Manage</a></li>
