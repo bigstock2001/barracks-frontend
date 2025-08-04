@@ -393,6 +393,7 @@ const server = http.createServer((req, res) => {
           <div class="container">
             <h2>💰 How Profit Sharing Works</h2>
             <p style="text-align: center; font-size: 1.2rem; color: #ffffff; margin-bottom: 3rem; background: rgba(0,0,0,0.8); padding: 1rem 2rem; border-radius: 8px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+            <p style="text-align: center; font-size: 1.2rem; color: #ffffff; margin-bottom: 3rem; background: rgba(30,58,138,0.9); padding: 1rem 2rem; border-radius: 8px; backdrop-filter: blur(10px); border: 1px solid rgba(59,130,246,0.3);">
               We believe creators should be rewarded for their success. Our transparent profit-sharing model 
               ensures you earn more as your content performs better.
             </p>
