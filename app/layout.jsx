@@ -32,6 +32,7 @@ export default function RootLayout({ children }) {
             <li><a href="/audiobooks">Audiobooks</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/account">Account</a></li>
+            <li><a href="/test-api">Test API</a></li>
           </ul>
         </nav>
 
