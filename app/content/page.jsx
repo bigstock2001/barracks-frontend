@@ -7,6 +7,7 @@ export default function ContentPage() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewCounts, setViewCounts] = useState({});
 
   useEffect(() => {
     async function fetchVideos() {
@@ -42,10 +43,15 @@ export default function ContentPage() {
     fetchVideos();
   }, []);
 
+  const handleViewTracked = (videoId, newViewCount) => {
+    setViewCounts(prev => ({
+      ...prev,
+      [videoId]: newViewCount
+    }));
+  };
   if (loading) {
     return (
       <div className="p-6 space-y-10">
-        <UploadForm />
         <div className="text-center text-gray-600">
           <p>Loading videos...</p>
         </div>
@@ -56,7 +62,6 @@ export default function ContentPage() {
   if (error) {
     return (
       <div className="p-6 space-y-10">
-        <UploadForm />
         <div className="text-center text-red-600 bg-red-50 p-4 rounded">
           <p className="font-semibold">Error loading videos:</p>
           <p>{error}</p>
@@ -83,7 +88,19 @@ export default function ContentPage() {
           {videos.map((video) => (
             <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden p-4">
               <h3 className="text-lg font-semibold mb-2 text-black">{video.title?.rendered || 'Untitled'}</h3>
-              <VideoPlayer playbackId={video.playback_id} />
+              <VideoPlayer 
+                playbackId={video.playback_id} 
+                videoId={video.id}
+                onViewTracked={(newCount) => handleViewTracked(video.id, newCount)}
+              />
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-sm text-gray-500">
+                  👁️ {viewCounts[video.id] || 0} views
+                </span>
+                <span className="text-xs text-gray-400">
+                  Unique IP tracking enabled
+                </span>
+              </div>
               {video.content?.rendered && (
                 <div 
                   className="mt-2 text-sm text-gray-600"
