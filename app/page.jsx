@@ -8,7 +8,7 @@ export default function ContentPage() {
   useEffect(() => {
     async function fetchVideos() {
       try {
-        const res = await fetch('/api/videos'); // use your headless API
+        const res = await fetch('/api/videos'); // now correctly hits your working API
         const data = await res.json();
         setVideos(data);
       } catch (err) {
@@ -21,7 +21,9 @@ export default function ContentPage() {
 
   return (
     <div className="px-8 py-12">
-      <h1 className="text-4xl font-bold text-white mb-8 text-center">Watch Exclusive Content</h1>
+      <h1 className="text-4xl font-bold text-white mb-8 text-center">
+        Watch Exclusive Content
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         {videos.map((video) => (
@@ -29,22 +31,24 @@ export default function ContentPage() {
             key={video.id}
             className="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105"
           >
-            {video.thumbnail && (
+            {video.thumbnail_url && (
               <img
-                src={video.thumbnail}
-                alt={video.title}
+                src={video.thumbnail_url}
+                alt={video.title.rendered}
                 className="w-full h-48 object-cover"
               />
             )}
 
             <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{video.title}</h2>
+              <h2 className="text-xl font-semibold mb-2 text-black">
+                {video.title.rendered}
+              </h2>
 
-              {video.playbackId ? (
+              {video.playback_id ? (
                 <mux-player
-                  playback-id={video.playbackId}
+                  playback-id={video.playback_id}
                   stream-type="on-demand"
-                  metadata-video-title={video.title}
+                  metadata-video-title={video.title.rendered}
                   class="w-full h-60 rounded"
                   primary-color="#c62828"
                   accent-color="#222"
@@ -53,9 +57,12 @@ export default function ContentPage() {
                 <p className="text-red-500">No video available.</p>
               )}
 
-              <div className="mt-2 text-sm text-gray-700">
-                {video.description || 'No description.'}
-              </div>
+              <div
+                className="mt-2 text-sm text-gray-700"
+                dangerouslySetInnerHTML={{
+                  __html: video.content?.rendered || '<p>No description.</p>',
+                }}
+              />
             </div>
           </div>
         ))}
