@@ -1,33 +1,34 @@
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// app/api/videos/route.js
 
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
-    const res = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
-      headers: { 'Accept': 'application/json' },
+    const response = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
+      headers: {
+        'Accept': 'application/json',
+      },
+      cache: 'no-store', // Disable caching
     });
 
-    if (!res.ok) throw new Error(`Fetch failed with status: ${res.status}`);
-
-    const text = await res.text();
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error('Response was not valid JSON');
+    if (!response.ok) {
+      console.error('Fetch error:', response.statusText);
+      return NextResponse.json({ error: `Upstream error: ${response.status}` }, { status: 500 });
     }
 
-    if (!Array.isArray(data)) throw new Error('Expected an array of videos');
+    const data = await response.json();
+
+    // Validate data is an array
+    if (!Array.isArray(data)) {
+      return NextResponse.json({ error: 'Expected an array of videos' }, { status: 500 });
+    }
 
     return NextResponse.json(data);
   } catch (err) {
-    console.error('Error in /api/videos:', err);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.error('API error:', err.message);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
