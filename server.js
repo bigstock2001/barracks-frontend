@@ -136,7 +136,7 @@ const server = http.createServer((req, res) => {
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
-        background: rgba(30,58,138,0.8);
+        background: rgba(30,58,138,0.9);
         padding: 1rem 2rem;
         border-radius: 8px;
         backdrop-filter: blur(10px);
@@ -301,7 +301,8 @@ const server = http.createServer((req, res) => {
       }
       
       .form-group input,
-      .form-group textarea {
+      .form-group textarea,
+      .form-group select {
         width: 100%;
         padding: 0.75rem;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -314,6 +315,11 @@ const server = http.createServer((req, res) => {
       .form-group input::placeholder,
       .form-group textarea::placeholder {
         color: #ccc;
+      }
+      
+      .form-group select option {
+        background: #333;
+        color: white;
       }
       
       @media (max-width: 768px) {
@@ -353,7 +359,7 @@ const server = http.createServer((req, res) => {
             <ul class="nav-links">
               <li><a href="#home">Home</a></li>
               <li><a href="#content">Content</a></li>
-              <li><a href="#upload">Upload</a></li>
+              <li><a href="#apply">Apply</a></li>
               <li><a href="#profit-sharing">Profit Sharing</a></li>
             </ul>
           </div>
@@ -373,7 +379,7 @@ const server = http.createServer((req, res) => {
             </p>
             
             <div class="cta-buttons">
-              <a href="#upload" class="btn btn-primary">🚀 Start Creating Now</a>
+              <a href="#apply" class="btn btn-primary">🚀 Apply to Create</a>
               <a href="#profit-sharing" class="btn btn-secondary">💰 Learn About Profit Sharing</a>
             </div>
             
@@ -384,7 +390,7 @@ const server = http.createServer((req, res) => {
               </div>
               <div class="stat-card">
                 <div class="stat-number blue">∞</div>
-                <div>Upload Limit (Paid)</div>
+                <div>Upload Limit (Free)</div>
               </div>
               <div class="stat-card">
                 <div class="stat-number green">24/7</div>
@@ -398,7 +404,6 @@ const server = http.createServer((req, res) => {
         <section id="profit-sharing" class="section">
           <div class="container">
             <h2>💰 How Profit Sharing Works</h2>
-            <p style="text-align: center; font-size: 1.2rem; color: #ffffff; margin-bottom: 3rem; background: rgba(0,0,0,0.8); padding: 1rem 2rem; border-radius: 8px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
             <p style="text-align: center; font-size: 1.2rem; color: #ffffff; margin-bottom: 3rem; background: rgba(30,58,138,0.9); padding: 1rem 2rem; border-radius: 8px; backdrop-filter: blur(10px); border: 1px solid rgba(59,130,246,0.3);">
               We believe creators should be rewarded for their success. Our transparent profit-sharing model 
               ensures you earn more as your content performs better.
@@ -424,8 +429,13 @@ const server = http.createServer((req, res) => {
               
               <div class="feature-card">
                 <h3>💎 Creator Tiers</h3>
-                <p><strong>Free Tier:</strong> 100MB limit, 1 video/month, no profit sharing</p>
-                <p><strong>Paid Tiers ($9.99-$29.99):</strong> Up to 5GB uploads, unlimited videos, 30% profit sharing, analytics dashboard</p>
+                <p><strong>Free Tier:</strong> Unlimited uploads, videos deleted after 3 months</p>
+                <p><strong>Paid Tiers ($9.99-$29.99):</strong> Permanent hosting, 30% profit sharing, analytics dashboard, archived content access</p>
+              </div>
+              
+              <div class="feature-card">
+                <h3>🗄️ Premium Archive Access</h3>
+                <p>Free tier videos are automatically deleted after 3 months. Paid subscribers get access to our complete archive of premium content, including all previously deleted videos.</p>
               </div>
             </div>
           </div>
@@ -441,8 +451,8 @@ const server = http.createServer((req, res) => {
           </div>
         </section>
 
-        <!-- Upload Section -->
-        <section id="upload" class="section">
+        <!-- Application Section -->
+        <section id="apply" class="section">
           <div class="container">
             <h2>📝 Apply for Creator Program</h2>
             <div class="upload-form">
@@ -455,12 +465,12 @@ const server = http.createServer((req, res) => {
                 <input type="text" placeholder="Your full name" id="applicantName" required>
               </div>
               <div class="form-group">
-                <label>Podcast Title *</label>
+                <label>Title of the Podcast *</label>
                 <input type="text" placeholder="Name of your podcast" id="podcastTitle" required>
               </div>
               <div class="form-group">
                 <label>Genre *</label>
-                <select id="genre" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white;">
+                <select id="genre" required>
                   <option value="">Select a genre</option>
                   <option value="military">Military & Veterans</option>
                   <option value="true-crime">True Crime</option>
@@ -477,10 +487,10 @@ const server = http.createServer((req, res) => {
               </div>
               <div class="form-group">
                 <label>RSS Feed *</label>
-                <select id="rssOption" onchange="toggleRssField()" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white;">
+                <select id="rssOption" onchange="toggleRssField()" required>
                   <option value="">Choose an option</option>
-                  <option value="transfer">Transfer existing RSS feed</option>
-                  <option value="new">Create new RSS feed</option>
+                  <option value="transfer">Will you be transferring your RSS feed</option>
+                  <option value="new">Want a new RSS feed</option>
                 </select>
               </div>
               <div class="form-group" id="rssUrlGroup" style="display: none;">
@@ -490,10 +500,6 @@ const server = http.createServer((req, res) => {
               <div class="form-group">
                 <label>Email *</label>
                 <input type="email" placeholder="your.email@example.com" id="applicantEmail" required>
-              </div>
-              <div class="form-group">
-                <label>Additional Information</label>
-                <textarea rows="4" placeholder="Tell us about your podcast, experience, or any other relevant information..." id="additionalInfo"></textarea>
               </div>
               <button class="btn btn-primary" onclick="submitApplication()">
                 📧 Submit Application
@@ -527,7 +533,7 @@ const server = http.createServer((req, res) => {
           }
         }
 
-        // Handle upload
+        // Handle RSS field toggle
         function toggleRssField() {
           const rssOption = document.getElementById('rssOption').value;
           const rssUrlGroup = document.getElementById('rssUrlGroup');
@@ -548,7 +554,6 @@ const server = http.createServer((req, res) => {
           const rssOption = document.getElementById('rssOption').value;
           const rssUrl = document.getElementById('rssUrl').value;
           const email = document.getElementById('applicantEmail').value;
-          const additionalInfo = document.getElementById('additionalInfo').value;
           
           // Validate required fields
           if (!name || !podcastTitle || !genre || !rssOption || !email) {
@@ -566,14 +571,11 @@ const server = http.createServer((req, res) => {
 New Podcast Creator Application
 
 Name: \${name}
-Podcast Title: \${podcastTitle}
+Title of the Podcast: \${podcastTitle}
 Genre: \${genre}
-RSS Feed: \${rssOption === 'transfer' ? 'Transfer existing feed' : 'Create new feed'}
+RSS Feed: \${rssOption === 'transfer' ? 'Will be transferring RSS feed' : 'Wants a new RSS feed'}
 \${rssOption === 'transfer' ? 'Current RSS URL: ' + rssUrl : ''}
 Email: \${email}
-
-Additional Information:
-\${additionalInfo || 'None provided'}
 
 Submitted: \${new Date().toLocaleString()}
           \`.trim();
@@ -603,7 +605,6 @@ Submitted: \${new Date().toLocaleString()}
           document.getElementById('rssOption').value = '';
           document.getElementById('rssUrl').value = '';
           document.getElementById('applicantEmail').value = '';
-          document.getElementById('additionalInfo').value = '';
           document.getElementById('rssUrlGroup').style.display = 'none';
         }
 
