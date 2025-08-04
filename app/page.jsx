@@ -15,6 +15,8 @@ export default function ContentPage() {
         const res = await fetch('/api/videos'); // now correctly hits your working API
         const data = await res.json();
         
+        console.log('Frontend received data:', data);
+        
         // Ensure we always set an array
         if (Array.isArray(data)) {
           setVideos(data);
