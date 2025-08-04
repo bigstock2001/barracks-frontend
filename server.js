@@ -130,11 +130,17 @@ const server = http.createServer((req, res) => {
       
       .hero p {
         font-size: 1.25rem;
-        color: #e0e0e0;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         margin-bottom: 2rem;
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
+        background: rgba(30,58,138,0.8);
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59,130,246,0.3);
       }
       
       .cta-buttons {
