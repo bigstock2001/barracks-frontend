@@ -1,3 +1,5 @@
+import AuthButtons from '../components/AuthButtons';
+
 export const metadata = {
   title: 'Barracks Media',
   description: 'Video platform for subscribers',
@@ -37,6 +39,11 @@ export default function RootLayout({ children }) {
             <li><a href="/account">Account</a></li>
             <li><a href="/test-api">Test API</a></li>
           </ul>
+          
+          {/* Auth Buttons */}
+          <div className="flex items-center space-x-4">
+            <AuthButtons />
+          </div>
         </nav>
 
         <main className="px-6 py-10">{children}</main>
