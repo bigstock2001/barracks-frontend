@@ -437,33 +437,61 @@ const server = http.createServer((req, res) => {
         <!-- Upload Section -->
         <section id="upload" class="section">
           <div class="container">
-            <h2>📤 Upload Your Content</h2>
+            <h2>📝 Apply for Creator Program</h2>
             <div class="upload-form">
-              <h3 style="margin-bottom: 1.5rem;">Ready to become a creator?</h3>
+              <h3 style="margin-bottom: 1.5rem;">Join the Elite Creator Program</h3>
+              <p style="color: #e0e0e0; margin-bottom: 2rem;">
+                Apply to become an approved creator. Most applications are reviewed and approved within 24 hours.
+              </p>
               <div class="form-group">
-                <label>Creator Name</label>
-                <input type="text" placeholder="Your creator name" id="creatorName">
+                <label>Name *</label>
+                <input type="text" placeholder="Your full name" id="applicantName" required>
               </div>
               <div class="form-group">
-                <label>Video Title</label>
-                <input type="text" placeholder="Enter your video title" id="videoTitle">
+                <label>Podcast Title *</label>
+                <input type="text" placeholder="Name of your podcast" id="podcastTitle" required>
               </div>
               <div class="form-group">
-                <label>Description</label>
-                <textarea rows="4" placeholder="Describe your content..." id="videoDescription"></textarea>
-              </div>
-              <div class="form-group">
-                <label>Choose Your Tier</label>
-                <select id="creatorTier" style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white;">
-                  <option value="free">Free Tier (100MB, 1 video/month)</option>
-                  <option value="starter">Starter Creator ($9.99/month)</option>
-                  <option value="pro">Pro Creator ($19.99/month)</option>
-                  <option value="premium">Premium Creator ($29.99/month)</option>
+                <label>Genre *</label>
+                <select id="genre" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white;">
+                  <option value="">Select a genre</option>
+                  <option value="military">Military & Veterans</option>
+                  <option value="true-crime">True Crime</option>
+                  <option value="comedy">Comedy</option>
+                  <option value="news">News & Politics</option>
+                  <option value="business">Business</option>
+                  <option value="health">Health & Fitness</option>
+                  <option value="technology">Technology</option>
+                  <option value="education">Education</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="sports">Sports</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
-              <button class="btn btn-primary" onclick="handleUpload()">
-                🎬 Start Upload Process
+              <div class="form-group">
+                <label>RSS Feed *</label>
+                <select id="rssOption" onchange="toggleRssField()" required style="width: 100%; padding: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white;">
+                  <option value="">Choose an option</option>
+                  <option value="transfer">Transfer existing RSS feed</option>
+                  <option value="new">Create new RSS feed</option>
+                </select>
+              </div>
+              <div class="form-group" id="rssUrlGroup" style="display: none;">
+                <label>Current RSS Feed URL</label>
+                <input type="url" placeholder="https://your-current-rss-feed.com/feed.xml" id="rssUrl">
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" placeholder="your.email@example.com" id="applicantEmail" required>
+              </div>
+              <div class="form-group">
+                <label>Additional Information</label>
+                <textarea rows="4" placeholder="Tell us about your podcast, experience, or any other relevant information..." id="additionalInfo"></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="submitApplication()">
+                📧 Submit Application
               </button>
+              <div id="applicationStatus" style="margin-top: 1rem; padding: 1rem; border-radius: 6px; display: none;"></div>
             </div>
           </div>
         </section>
@@ -493,21 +521,83 @@ const server = http.createServer((req, res) => {
         }
 
         // Handle upload
-        function handleUpload() {
-          const creatorName = document.getElementById('creatorName').value;
-          const videoTitle = document.getElementById('videoTitle').value;
-          const tier = document.getElementById('creatorTier').value;
+        function toggleRssField() {
+          const rssOption = document.getElementById('rssOption').value;
+          const rssUrlGroup = document.getElementById('rssUrlGroup');
           
-          if (!creatorName || !videoTitle) {
-            alert('Please fill in creator name and video title');
+          if (rssOption === 'transfer') {
+            rssUrlGroup.style.display = 'block';
+            document.getElementById('rssUrl').required = true;
+          } else {
+            rssUrlGroup.style.display = 'none';
+            document.getElementById('rssUrl').required = false;
+          }
+        }
+
+        function submitApplication() {
+          const name = document.getElementById('applicantName').value;
+          const podcastTitle = document.getElementById('podcastTitle').value;
+          const genre = document.getElementById('genre').value;
+          const rssOption = document.getElementById('rssOption').value;
+          const rssUrl = document.getElementById('rssUrl').value;
+          const email = document.getElementById('applicantEmail').value;
+          const additionalInfo = document.getElementById('additionalInfo').value;
+          
+          // Validate required fields
+          if (!name || !podcastTitle || !genre || !rssOption || !email) {
+            alert('Please fill in all required fields (marked with *)');
             return;
           }
           
-          if (tier === 'free') {
-            alert('Free tier upload initiated! In a real app, this would connect to Mux for video upload.');
-          } else {
-            alert(\`\${tier} tier selected! This would redirect to Stripe checkout for subscription.\`);
+          if (rssOption === 'transfer' && !rssUrl) {
+            alert('Please provide your current RSS feed URL');
+            return;
           }
+          
+          // Create email body
+          const emailBody = \`
+New Podcast Creator Application
+
+Name: \${name}
+Podcast Title: \${podcastTitle}
+Genre: \${genre}
+RSS Feed: \${rssOption === 'transfer' ? 'Transfer existing feed' : 'Create new feed'}
+\${rssOption === 'transfer' ? 'Current RSS URL: ' + rssUrl : ''}
+Email: \${email}
+
+Additional Information:
+\${additionalInfo || 'None provided'}
+
+Submitted: \${new Date().toLocaleString()}
+          \`.trim();
+          
+          // Create mailto link
+          const mailtoLink = \`mailto:support@barracksmedia.com?subject=Podcast Creator Application - \${podcastTitle}&body=\${encodeURIComponent(emailBody)}\`;
+          
+          // Open email client
+          window.location.href = mailtoLink;
+          
+          // Show success message
+          const statusDiv = document.getElementById('applicationStatus');
+          statusDiv.style.display = 'block';
+          statusDiv.style.background = 'rgba(34, 197, 94, 0.2)';
+          statusDiv.style.border = '1px solid #22c55e';
+          statusDiv.style.color = '#22c55e';
+          statusDiv.innerHTML = \`
+            <strong>✅ Application Submitted!</strong><br>
+            Your application has been sent to support@barracksmedia.com<br>
+            <em>Most applications are approved within 24 hours.</em>
+          \`;
+          
+          // Clear form
+          document.getElementById('applicantName').value = '';
+          document.getElementById('podcastTitle').value = '';
+          document.getElementById('genre').value = '';
+          document.getElementById('rssOption').value = '';
+          document.getElementById('rssUrl').value = '';
+          document.getElementById('applicantEmail').value = '';
+          document.getElementById('additionalInfo').value = '';
+          document.getElementById('rssUrlGroup').style.display = 'none';
         }
 
         // Smooth scrolling for navigation
