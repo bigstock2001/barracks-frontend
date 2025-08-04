@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function UploadPage() {
   const [uploadUrl, setUploadUrl] = useState('');
@@ -11,7 +11,74 @@ export default function UploadPage() {
   const [videoDescription, setVideoDescription] = useState('');
   const [creatorTier, setCreatorTier] = useState('free');
   const [creatorName, setCreatorName] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [heroesDiscount, setHeroesDiscount] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
+  // Stripe price IDs (replace with your actual price IDs)
+  const pricingPlans = {
+    starter: {
+      priceId: 'price_starter_monthly',
+      name: 'Starter Creator',
+      price: 9.99,
+      features: ['Up to 1GB uploads', '10 videos/month', 'Basic analytics', 'Community support']
+    },
+    pro: {
+      priceId: 'price_pro_monthly', 
+      name: 'Pro Creator',
+      price: 19.99,
+      features: ['Up to 3GB uploads', '50 videos/month', 'Advanced analytics', 'Priority support', 'Custom thumbnails']
+    },
+    premium: {
+      priceId: 'price_premium_monthly',
+      name: 'Premium Creator', 
+      price: 29.99,
+      features: ['Unlimited uploads', 'Unlimited videos', 'Full analytics suite', 'Priority support', 'Custom branding', 'API access']
+    }
+  };
+
+  const handleSubscribe = async (planKey) => {
+    try {
+      if (!creatorName.trim()) {
+        alert('Please enter your creator name first');
+        return;
+      }
+
+      const plan = pricingPlans[planKey];
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: plan.priceId,
+          customerEmail: `${creatorName.toLowerCase().replace(/\s+/g, '')}@example.com`, // In real app, use actual email
+          heroesDiscount,
+        }),
+      });
+
+      const { sessionId } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      const stripe = window.Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to start checkout. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    // Load Stripe.js
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
   async function getUploadUrl() {
     if (!videoTitle.trim()) {
       setStatus('❌ Please enter a video title');
@@ -114,186 +181,207 @@ export default function UploadPage() {
             🎬 Content Creator Upload
           </h1>
           <p className="text-lg text-gray-600">
-            Upload your videos to Barracks Media platform
+            Choose your creator tier and start uploading to Barracks Media
           </p>
         </div>
 
-        {/* Tier Selection */}
+        {/* Creator Information */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Select Your Creator Tier</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Creator Information</h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Free Tier */}
-            <div 
-              className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
-                creatorTier === 'free' 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setCreatorTier('free')}
-            >
-              <div className="flex items-center mb-3">
-                <input
-                  type="radio"
-                  name="tier"
-                  value="free"
-                  checked={creatorTier === 'free'}
-                  onChange={(e) => setCreatorTier(e.target.value)}
-                  className="mr-3"
-                />
-                <h3 className="text-xl font-semibold text-gray-900">Free Tier</h3>
-                <span className="ml-2 bg-green-100 text-green-800 text-sm px-2 py-1 rounded">$0/month</span>
-              </div>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Max file size: {tierLimits.free.maxFileSize}</li>
-                <li>• Upload limit: {tierLimits.free.maxVideos}</li>
-                {tierLimits.free.features.map((feature, index) => (
-                  <li key={index}>• {feature}</li>
-                ))}
-              </ul>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Creator Name *
+              </label>
+              <input
+                type="text"
+                value={creatorName}
+                onChange={(e) => setCreatorName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                placeholder="Your creator name"
+                required
+              />
             </div>
-
-            {/* Paid Tier */}
-            <div 
-              className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
-                creatorTier === 'paid' 
-                  ? 'border-purple-500 bg-purple-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setCreatorTier('paid')}
-            >
-              <div className="flex items-center mb-3">
-                <input
-                  type="radio"
-                  name="tier"
-                  value="paid"
-                  checked={creatorTier === 'paid'}
-                  onChange={(e) => setCreatorTier(e.target.value)}
-                  className="mr-3"
-                />
-                <h3 className="text-xl font-semibold text-gray-900">Premium Tier</h3>
-                <span className="ml-2 bg-purple-100 text-purple-800 text-sm px-2 py-1 rounded">$29/month</span>
-              </div>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Max file size: {tierLimits.paid.maxFileSize}</li>
-                <li>• Upload limit: {tierLimits.paid.maxVideos}</li>
-                {tierLimits.paid.features.map((feature, index) => (
-                  <li key={index}>• {feature}</li>
-                ))}
-              </ul>
+            
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="heroesDiscount"
+                checked={heroesDiscount}
+                onChange={(e) => setHeroesDiscount(e.target.checked)}
+                className="mr-3"
+              />
+              <label htmlFor="heroesDiscount" className="text-sm text-gray-700">
+                I am a veteran, teacher, or first responder (30% discount)
+              </label>
             </div>
           </div>
         </div>
 
-        {/* Upload Form */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upload Your Video</h2>
+        {/* Pricing Plans */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Choose Your Creator Plan</h2>
           
-          <form onSubmit={handleUpload} className="space-y-6">
-            {/* Creator Information */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Creator Name *
-                </label>
-                <input
-                  type="text"
-                  value={creatorName}
-                  onChange={(e) => setCreatorName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="Your creator name"
-                  required
-                />
+          <div className="grid md:grid-cols-3 gap-6">
+            {Object.entries(pricingPlans).map(([key, plan]) => (
+              <div key={key} className="border-2 border-gray-200 rounded-lg p-6 relative">
+                {key === 'pro' && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="text-center mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                  <div className="mt-2">
+                    <span className="text-3xl font-bold text-gray-900">
+                      ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
+                    </span>
+                    <span className="text-gray-600">/month</span>
+                    {heroesDiscount && (
+                      <div className="text-sm text-green-600 font-medium">
+                        30% Heroes Discount Applied!
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <ul className="space-y-2 text-gray-600 mb-6">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-center">
+                      <svg className="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                
+                <button
+                  onClick={() => handleSubscribe(key)}
+                  disabled={!creatorName.trim()}
+                  className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
+                    key === 'pro'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400'
+                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100'
+                  } disabled:cursor-not-allowed`}
+                >
+                  {!creatorName.trim() ? 'Enter Name First' : 'Subscribe Now'}
+                </button>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Selected Tier
-                </label>
-                <div className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  creatorTier === 'free' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-purple-100 text-purple-800'
-                }`}>
-                  {creatorTier === 'free' ? 'Free Tier' : 'Premium Tier'}
+            ))}
+          </div>
+          
+          {/* Free Tier Option */}
+          <div className="mt-8 p-6 bg-gray-50 rounded-lg text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Try Before You Buy</h3>
+            <p className="text-gray-600 mb-4">
+              Start with our free tier: 1 video upload, 100MB max file size
+            </p>
+            <button
+              onClick={() => setCreatorTier('free')}
+              className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors"
+            >
+              Continue with Free Tier
+            </button>
+          </div>
+        </div>
+
+        {/* Upload Form - Only show if free tier selected or user has subscription */}
+        {creatorTier === 'free' && (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Upload Your Video (Free Tier)</h2>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <div>
+                  <p className="text-yellow-800 font-medium">Free Tier Limitations</p>
+                  <p className="text-yellow-700 text-sm">Max file size: 100MB • 1 video upload only</p>
                 </div>
               </div>
             </div>
-
-            {/* Video Information */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video Title *
-              </label>
-              <input
-                type="text"
-                value={videoTitle}
-                onChange={(e) => setVideoTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                placeholder="Enter your video title"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video Description
-              </label>
-              <textarea
-                value={videoDescription}
-                onChange={(e) => setVideoDescription(e.target.value)}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                placeholder="Describe your video content..."
-              />
-            </div>
-
-            {/* Upload Steps */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span className="text-gray-700">Step 1: Get Upload URL</span>
-                <button
-                  type="button"
-                  onClick={getUploadUrl}
-                  disabled={!videoTitle.trim() || !creatorName.trim()}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  Get Upload URL
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span className="text-gray-700">Step 2: Select Video File</span>
+            
+            <form onSubmit={handleUpload} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Video Title *
+                </label>
                 <input
-                  type="file"
-                  accept="video/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  disabled={!uploadUrl}
-                  className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                  type="text"
+                  value={videoTitle}
+                  onChange={(e) => setVideoTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  placeholder="Enter your video title"
+                  required
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span className="text-gray-700">Step 3: Upload Video</span>
-                <button
-                  type="submit"
-                  disabled={!uploadUrl || !file || uploading}
-                  className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {uploading ? 'Uploading...' : 'Upload Video'}
-                </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Video Description
+                </label>
+                <textarea
+                  value={videoDescription}
+                  onChange={(e) => setVideoDescription(e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  placeholder="Describe your video content..."
+                />
               </div>
-            </div>
-          </form>
 
-          {/* Status Display */}
-          {status && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
-              <h3 className="font-semibold text-gray-900 mb-2">Upload Status:</h3>
-              <p className="text-gray-700">{status}</p>
-            </div>
-          )}
-        </div>
+              {/* Upload Steps */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Step 1: Get Upload URL</span>
+                  <button
+                    type="button"
+                    onClick={getUploadUrl}
+                    disabled={!videoTitle.trim() || !creatorName.trim()}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Get Upload URL
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Step 2: Select Video File (Max 100MB)</span>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    disabled={!uploadUrl}
+                    className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <span className="text-gray-700">Step 3: Upload Video</span>
+                  <button
+                    type="submit"
+                    disabled={!uploadUrl || !file || uploading}
+                    className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload Video'}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Status Display */}
+            {status && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
+                <h3 className="font-semibold text-gray-900 mb-2">Upload Status:</h3>
+                <p className="text-gray-700">{status}</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Guidelines */}
         <div className="mt-8 bg-blue-50 rounded-lg p-6">
@@ -304,6 +392,7 @@ export default function UploadPage() {
             <li>• Ensure your content follows community guidelines</li>
             <li>• Processing time varies based on file size (typically 5-15 minutes)</li>
             <li>• Videos will appear on the platform once processing is complete</li>
+            <li>• Subscribers get priority processing and support</li>
           </ul>
         </div>
       </div>

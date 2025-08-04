@@ -30,6 +30,7 @@ export default function RootLayout({ children }) {
           <ul className="flex space-x-6 text-lg font-medium">
             <li><a href="/content">Content</a></li>
             <li><a href="/upload">Upload</a></li>
+            <li><a href="/upload/manage">Manage</a></li>
             <li><a href="/audiobooks">Audiobooks</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/account">Account</a></li>

@@ -8,9 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@mux/mux-player-react": "^1.0.0",
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "@mux/mux-player-react": "^1.0.0"
+    "stripe": "^18.4.0"
   }
 }
