@@ -162,7 +162,7 @@ export default function UploadPage() {
 
   const tierLimits = {
     free: {
-      maxFileSize: '500MB',
+      maxFileSize: '2GB',
       maxVideos: '5 videos per month',
       features: ['Basic video hosting', 'Standard quality', 'Community support']
     },
@@ -279,7 +279,7 @@ export default function UploadPage() {
           <div className="mt-8 p-6 bg-gray-50 rounded-lg text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Try Before You Buy</h3>
             <p className="text-gray-600 mb-4">
-              Start with our free tier: 1 video upload, 100MB max file size
+              Start with our free tier: 1 video upload, 2GB max file size
             </p>
             <button
               onClick={() => setCreatorTier('free')}
@@ -302,7 +302,7 @@ export default function UploadPage() {
                 </svg>
                 <div>
                   <p className="text-yellow-800 font-medium">Free Tier Limitations</p>
-                  <p className="text-yellow-700 text-sm">Max file size: 100MB • 1 video upload only</p>
+                  <p className="text-yellow-700 text-sm">Max file size: 2GB • 1 video upload only</p>
                 </div>
               </div>
             </div>
@@ -350,7 +350,7 @@ export default function UploadPage() {
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Step 2: Select Video File (Max 100MB)</span>
+                  <span className="text-gray-700">Step 2: Select Video File (Max 2GB)</span>
                   <input
                     type="file"
                     accept="video/*"
