@@ -2,7 +2,11 @@
 
 import { MuxPlayer } from '@mux/mux-player-react';
 
-export default function VideoPlayer({ playbackId }) {
+type Props = {
+  playbackId: string;
+};
+
+export default function VideoPlayer({ playbackId }: Props) {
   console.log('Rendering MuxPlayer with ID:', playbackId);
 
   if (!playbackId) {
@@ -22,6 +26,13 @@ export default function VideoPlayer({ playbackId }) {
         playbackId={playbackId}
         streamType="on-demand"
         controls
-        autoPlay
+        autoPlay={false}
         style={{
           width: '100%',
+          height: '300px',
+          borderRadius: '12px',
+        }}
+      />
+    </div>
+  );
+}

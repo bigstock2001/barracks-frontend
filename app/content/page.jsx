@@ -1,15 +1,21 @@
-'use client';
+useEffect(() => {
+  async function fetchVideos() {
+    try {
+      const res = await fetch('/api/videos');
+      const data = await res.json();
 
-export default function ContentPage() {
-  return (
-    <div className="p-10">
-      <h1 className="text-2xl font-bold mb-4">Test Mux Player</h1>
-      <mux-player
-        playback-id="2Qrum02mOJs4lr6Xhou9NfU2atZSAEeGKNPW02502zcATo"
-        stream-type="on-demand"
-        metadata-video-title="Test Video"
-        class="w-full max-w-3xl h-[400px] rounded shadow-lg"
-      ></mux-player>
-    </div>
-  );
-}
+      // Defensive check to avoid crashing on bad data
+      if (Array.isArray(data)) {
+        setVideos(data);
+      } else {
+        console.error('Expected an array but got:', data);
+        setVideos([]); // fallback to empty array to avoid .map() crash
+      }
+    } catch (err) {
+      console.error('Failed to fetch videos:', err);
+      setVideos([]); // fallback in case of network or parsing errors
+    }
+  }
+
+  fetchVideos();
+}, []);
