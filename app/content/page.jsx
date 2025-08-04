@@ -34,7 +34,10 @@ export default function ContentPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {videos.map((video) => (
-          <VideoPlayer key={video.id} playbackId={video.playback_id} />
+          <div key={video.id} className="bg-white rounded-lg shadow-md overflow-hidden p-4">
+            <h3 className="text-lg font-semibold mb-2 text-black">{video.title?.rendered || 'Untitled'}</h3>
+            <VideoPlayer playbackId={video.playback_id} />
+          </div>
         ))}
       </div>
     </div>
