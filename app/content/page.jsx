@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import UploadForm from '../../components/uploadform';
-import VideoPlayer from '../../components/videoplayer';
+import VideoPlayer from '../../components/VideoPlayer';
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
