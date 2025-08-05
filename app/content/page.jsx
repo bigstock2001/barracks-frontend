@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import VideoPlayer from '../../components/VideoPlayer';
+import ReviewSystem from '../../components/ReviewSystem';
 
 export default function ContentPage() {
   const [videos, setVideos] = useState([]);
@@ -107,6 +108,14 @@ export default function ContentPage() {
                   dangerouslySetInnerHTML={{ __html: video.content.rendered }}
                 />
               )}
+              
+              {/* Review System */}
+              <div className="mt-4">
+                <ReviewSystem 
+                  contentId={video.id.toString()} 
+                  contentType="podcast"
+                />
+              </div>
             </div>
           ))}
         </div>

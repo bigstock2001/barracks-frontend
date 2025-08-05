@@ -398,6 +398,24 @@ export default function AccountPage() {
                   <div className="font-semibold text-yellow-900">Messages</div>
                   <div className="text-sm text-yellow-700">Manage connections</div>
                 </a>
+                
+                <a
+                  href="/reviews"
+                  className="bg-orange-50 hover:bg-orange-100 p-4 rounded-lg text-center transition-colors"
+                >
+                  <div className="text-2xl mb-2">⭐</div>
+                  <div className="font-semibold text-orange-900">My Reviews</div>
+                  <div className="text-sm text-orange-700">View ratings & feedback</div>
+                </a>
+                
+                <a
+                  href="/reports"
+                  className="bg-red-50 hover:bg-red-100 p-4 rounded-lg text-center transition-colors"
+                >
+                  <div className="text-2xl mb-2">🛡️</div>
+                  <div className="font-semibold text-red-900">Safety Center</div>
+                  <div className="text-sm text-red-700">Reports & safety tools</div>
+                </a>
               </div>
             </div>
           </div>
