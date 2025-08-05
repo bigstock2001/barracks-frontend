@@ -126,7 +126,7 @@ export default function AuthButtons() {
           href="/account"
           className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-blue-700 transition-colors"
         >
-          Account
+          My Account
         </a>
         <button
           onClick={handleLogout}

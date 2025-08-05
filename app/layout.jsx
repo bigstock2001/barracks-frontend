@@ -74,7 +74,6 @@ export default function RootLayout({ children }) {
             <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
             <li><ServicesDropdown /></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
-            <li><a href="/account" className="hover:text-yellow-400 transition-colors">Account</a></li>
           </ul>
           
           {/* Auth Buttons */}
