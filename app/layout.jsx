@@ -33,6 +33,7 @@ export default function RootLayout({ children }) {
           <ul className="flex space-x-6 text-lg font-medium">
             <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
             <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
+            <li><a href="/directory" className="hover:text-yellow-400 transition-colors">Guest Directory</a></li>
             <li><a href="/upload" className="hover:text-yellow-400 transition-colors">Upload</a></li>
             <li><a href="/upload/manage" className="hover:text-yellow-400 transition-colors">Manage</a></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>

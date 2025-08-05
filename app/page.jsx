@@ -26,6 +26,15 @@ export default function HomePage() {
             </a>
             
             <a
+              href="/directory"
+              className="group relative px-8 py-4 text-lg font-semibold text-white rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-green-400"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-teal-500 to-green-500 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-400 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="relative z-10">🎤 Guest Directory</span>
+            </a>
+            
+            <a
               href="#profit-sharing"
               className="group relative px-8 py-4 text-lg font-semibold text-white rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-yellow-400"
             >
@@ -38,12 +47,12 @@ export default function HomePage() {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="bg-black bg-opacity-40 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
-              <div className="text-3xl font-bold text-yellow-400 mb-2">7</div>
-              <div className="text-gray-200">Hosting Plans</div>
+              <div className="text-3xl font-bold text-yellow-400 mb-2">🎙️</div>
+              <div className="text-gray-200">Guest Directory</div>
             </div>
             <div className="bg-black bg-opacity-40 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
-              <div className="text-3xl font-bold text-blue-400 mb-2">∞</div>
-              <div className="text-gray-200">Storage (Top Tier)</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">7</div>
+              <div className="text-gray-200">Hosting Plans</div>
             </div>
             <div className="bg-black bg-opacity-40 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
               <div className="text-3xl font-bold text-green-400 mb-2">24/7</div>

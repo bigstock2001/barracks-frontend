@@ -234,6 +234,25 @@ export default function UploadPage() {
                 I am a veteran, teacher, or first responder (30% discount)
               </label>
             </div>
+            
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center mb-2">
+                <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-green-800 font-medium">🎤 New: Guest Directory Access</p>
+              </div>
+              <p className="text-green-700 text-sm">
+                Tier 2+ hosting plans include <strong>FREE access</strong> to our Podcast Guest Directory! 
+                Connect with quality guests for your show.
+              </p>
+              <a
+                href="/directory"
+                className="inline-block mt-2 text-green-600 hover:text-green-800 text-sm font-medium"
+              >
+                Learn more about the Guest Directory →
+              </a>
+            </div>
           </div>
         </div>
 
@@ -278,6 +297,12 @@ export default function UploadPage() {
                         {feature}
                       </li>
                     ))}
+                    {(key === 'barracks_procast' || key === 'commandcast_network') && (
+                      <li className="flex items-start">
+                        <span className="text-green-500 mr-2 mt-0.5">•</span>
+                        <span className="font-medium text-green-700">FREE Guest Directory access</span>
+                      </li>
+                    )}
                   </ul>
                   
                   <button
