@@ -73,6 +73,7 @@ export default function RootLayout({ children }) {
             <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
             <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
             <li><ServicesDropdown /></li>
+            <li><a href="/messages" className="hover:text-yellow-400 transition-colors">Messages</a></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
           </ul>
           

@@ -389,6 +389,15 @@ export default function AccountPage() {
                   <div className="font-semibold text-purple-900">Guest Directory</div>
                   <div className="text-sm text-purple-700">Find podcast guests</div>
                 </a>
+                
+                <a
+                  href="/messages"
+                  className="bg-yellow-50 hover:bg-yellow-100 p-4 rounded-lg text-center transition-colors"
+                >
+                  <div className="text-2xl mb-2">💬</div>
+                  <div className="font-semibold text-yellow-900">Messages</div>
+                  <div className="text-sm text-yellow-700">Manage connections</div>
+                </a>
               </div>
             </div>
           </div>
