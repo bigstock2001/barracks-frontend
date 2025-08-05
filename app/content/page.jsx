@@ -1,6 +1,8 @@
-export default function ContentPage() {
+'use client';
+
 import { useState, useEffect } from 'react';
 
+export default function ContentPage() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,7 +106,7 @@ import { useState, useEffect } from 'react';
                       playback-id={video.acf.playback_id}
                       stream-type="on-demand"
                       metadata-video-title={video.title?.rendered || 'Video'}
-                      class="w-full h-full"
+                      className="w-full h-full"
                       primary-color="#c62828"
                       accent-color="#222"
                     ></mux-player>
@@ -192,5 +194,4 @@ import { useState, useEffect } from 'react';
       </div>
     </div>
   );
-'use client';
 }
