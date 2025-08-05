@@ -226,10 +226,19 @@ export default function DirectoryPage() {
                 
                 <button
                   onClick={userType === 'guest' ? handleSubscribeGuest : handleSubscribePodcaster}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mr-4"
                 >
                   {userType === 'guest' ? 'Create Guest Profile' : 'Access Guest Directory'}
                 </button>
+                
+                {userType === 'guest' && (
+                  <a
+                    href="/directory/setup"
+                    className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                  >
+                    📝 Setup Guest Profile
+                  </a>
+                )}
               </div>
             ) : (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
