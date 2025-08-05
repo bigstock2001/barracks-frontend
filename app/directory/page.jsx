@@ -143,7 +143,7 @@ export default function DirectoryPage() {
             <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-2">
               <div className="bg-white h-3 rounded-full transition-all duration-500" style={{width: '15.3%'}}></div>
             </div>
-          </p>
+          </div>
         </div>
 
         {/* User Type Selection */}
