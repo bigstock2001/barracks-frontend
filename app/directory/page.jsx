@@ -399,7 +399,7 @@ export default function DirectoryPage() {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
               <h3 className="text-lg font-bold text-yellow-800 mb-2">🚀 Limited Time: Founding Member Benefits</h3>
               <p className="text-yellow-700">
-                Join within the first 60 days of launch and get <strong>lifetime free access</strong> to the entire Guest Directory!
+                Be one of the first <strong>150 guests</strong> to sign up and get <strong>lifetime free access</strong> to the entire Guest Directory!
               </p>
             </div>
           </div>

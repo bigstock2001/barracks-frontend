@@ -244,7 +244,7 @@ export default function UploadPage() {
               </div>
               <p className="text-green-700 text-sm">
                 Tier 2+ hosting plans include <strong>FREE access</strong> to our Podcast Guest Directory! 
-                Connect with quality guests for your show.
+                Connect with quality guests for your show. Plus, the first 150 guests to join get lifetime free access!
               </p>
               <a
                 href="/directory"
