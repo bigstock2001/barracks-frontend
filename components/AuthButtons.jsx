@@ -49,7 +49,11 @@ export default function AuthButtons() {
     const { user, session, error } = await authService.signIn(formData.email, formData.password);
     
     if (error) {
-      alert('Login failed: ' + error);
+      if (error.includes('not configured')) {
+        alert('Demo Mode: Authentication is not configured. This is a preview version.');
+      } else {
+        alert('Login failed: ' + error);
+      }
     } else {
       setUser(user);
       setIsLoggedIn(true);
@@ -78,7 +82,11 @@ export default function AuthButtons() {
     );
     
     if (error) {
-      alert('Registration failed: ' + error);
+      if (error.includes('not configured')) {
+        alert('Demo Mode: Authentication is not configured. This is a preview version.');
+      } else {
+        alert('Registration failed: ' + error);
+      }
     } else {
       setUser(user);
       setIsLoggedIn(true);
