@@ -14,23 +14,26 @@ export default function AccountPage() {
 
   // Stripe price IDs (replace with your actual price IDs)
   const pricingPlans = {
-    starter: {
-      priceId: 'price_starter_monthly',
-      name: 'Starter Creator',
-      price: 9.99,
-      features: ['Up to 1GB uploads', '10 videos/month', 'Basic analytics', 'Community support']
-    },
-    pro: {
-      priceId: 'price_pro_monthly', 
-      name: 'Pro Creator',
+    signal_basic: {
+      priceId: 'price_signal_basic_monthly',
+      name: 'Signal Basic',
       price: 19.99,
-      features: ['Up to 3GB uploads', '50 videos/month', 'Advanced analytics', 'Priority support', 'Custom thumbnails']
+      category: 'Hosting Only (DIY)',
+      features: ['1 Podcast (audio only)', '10GB upload/month (~100 hrs)', 'Basic analytics', 'RSS feed setup']
     },
-    premium: {
-      priceId: 'price_premium_monthly',
-      name: 'Premium Creator', 
-      price: 29.99,
-      features: ['Unlimited uploads', 'Unlimited videos', 'Full analytics suite', 'Priority support', 'Custom branding', 'API access']
+    barracks_procast: {
+      priceId: 'price_barracks_procast_monthly', 
+      name: 'Barracks ProCast',
+      price: 39.99,
+      category: 'Growth Plan (White-Labeled)',
+      features: ['Everything in Signal Basic', 'Up to 3 podcasts', '30GB upload/month', 'Private episodes', 'Custom branded page']
+    },
+    commandcast_network: {
+      priceId: 'price_commandcast_network_monthly',
+      name: 'CommandCast Network', 
+      price: 69.99,
+      category: 'Agency Creator (Top Tier)',
+      features: ['Everything in Barracks ProCast', '5 active podcasts', '100GB upload/month', 'Analytics dashboard', 'Agency RSS management']
     }
   };
 
@@ -279,9 +282,9 @@ export default function AccountPage() {
             {/* Upgrade Plan Section - Only show for free tier users */}
             {user.tier === 'free' && (
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">🚀 Upgrade Your Plan</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">🚀 Upgrade Your Podcast Plan</h2>
                 <p className="text-gray-600 mb-6">
-                  Unlock unlimited uploads, profit sharing, and premium features!
+                  Unlock multiple podcasts, more storage, and premium podcast features!
                 </p>
                 
                 <div className="flex items-center mb-6">
@@ -311,6 +314,7 @@ export default function AccountPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="font-semibold text-gray-900">{plan.name}</h3>
+                          <div className="text-xs text-gray-500">{plan.category}</div>
                           <div className="text-sm text-gray-600">
                             <span className="text-2xl font-bold text-gray-900">
                               ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
@@ -330,7 +334,7 @@ export default function AccountPage() {
                         <button
                           onClick={() => handleSubscribe(key)}
                           className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                            key === 'pro'
+                            key === 'barracks_procast'
                               ? 'bg-blue-600 text-white hover:bg-blue-700'
                               : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                           }`}
@@ -345,11 +349,11 @@ export default function AccountPage() {
                 <div className="mt-4 p-3 bg-green-50 rounded-lg">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                     </svg>
                     <div>
-                      <p className="text-green-800 font-medium">Start Earning with Profit Sharing!</p>
-                      <p className="text-green-700 text-sm">Paid subscribers earn 30% of platform revenue based on performance.</p>
+                      <p className="text-green-800 font-medium">Professional Podcast Hosting!</p>
+                      <p className="text-green-700 text-sm">Get RSS feeds, directory submissions, and professional podcast features.</p>
                     </div>
                   </div>
                 </div>
@@ -364,7 +368,7 @@ export default function AccountPage() {
                   href="/upload"
                   className="block w-full bg-green-600 text-white text-center py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
                 >
-                  🎬 Upload New Video
+                  🎙️ Upload New Podcast
                 </a>
                 <a
                   href="/content"
@@ -380,7 +384,7 @@ export default function AccountPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* View Statistics Overview */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">📊 View Statistics</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">📊 Podcast Statistics</h2>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-blue-50 rounded-lg p-4 text-center">
@@ -409,16 +413,16 @@ export default function AccountPage() {
                 </div>
                 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">🏆 Top Performing Video</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">🏆 Top Performing Episode</h3>
                   <div className="font-medium text-gray-900">{viewStats.topVideo.title}</div>
-                  <div className="text-lg font-bold text-gray-700">{viewStats.topVideo.views.toLocaleString()} views</div>
+                  <div className="text-lg font-bold text-gray-700">{viewStats.topVideo.views.toLocaleString()} plays</div>
                 </div>
               </div>
             </div>
 
             {/* Recent Views Chart */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">📈 Recent Views (Last 7 Days)</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">📈 Recent Plays (Last 7 Days)</h2>
               
               <div className="space-y-3">
                 {viewStats.recentViews.map((day, index) => {

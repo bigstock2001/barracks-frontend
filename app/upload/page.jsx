@@ -17,23 +17,54 @@ export default function UploadPage() {
 
   // Stripe price IDs (replace with your actual price IDs)
   const pricingPlans = {
-    starter: {
-      priceId: 'price_starter_monthly',
-      name: 'Starter Creator',
-      price: 9.99,
-      features: ['Up to 1GB uploads', '10 videos/month', 'Basic analytics', 'Community support']
-    },
-    pro: {
-      priceId: 'price_pro_monthly', 
-      name: 'Pro Creator',
+    signal_basic: {
+      priceId: 'price_signal_basic_monthly',
+      name: 'Signal Basic',
       price: 19.99,
-      features: ['Up to 3GB uploads', '50 videos/month', 'Advanced analytics', 'Priority support', 'Custom thumbnails']
+      category: 'Hosting Only (DIY)',
+      features: ['1 Podcast (audio only)', '10GB upload/month (~100 hrs)', 'Basic analytics', 'RSS feed setup', 'Directory submission links', 'Email support']
     },
-    premium: {
-      priceId: 'price_premium_monthly',
-      name: 'Premium Creator', 
-      price: 29.99,
-      features: ['Unlimited uploads', 'Unlimited videos', 'Full analytics suite', 'Priority support', 'Custom branding', 'API access']
+    barracks_procast: {
+      priceId: 'price_barracks_procast_monthly', 
+      name: 'Barracks ProCast',
+      price: 39.99,
+      category: 'Growth Plan (White-Labeled)',
+      features: ['Everything in Signal Basic', 'Up to 3 podcasts', '30GB upload/month', 'Private episodes (100 listeners)', 'Custom branded podcast page', 'Priority support', 'White-labeled experience']
+    },
+    commandcast_network: {
+      priceId: 'price_commandcast_network_monthly',
+      name: 'CommandCast Network', 
+      price: 69.99,
+      category: 'Agency Creator (Top Tier)',
+      features: ['Everything in Barracks ProCast', 'Unlimited team members', '5 active podcasts', '100GB upload/month', 'Private podcast groups access', 'Analytics dashboard', 'Monthly growth call (add-on)', 'RSS managed by agency']
+    },
+    pro_audio_pod: {
+      priceId: 'price_pro_audio_pod_monthly',
+      name: 'Pro Audio Pod',
+      price: 149.00,
+      category: 'Audio Edit + Host',
+      features: ['4 episodes/month', 'Audio cleanup & leveling', 'Intro/outro editing', 'Hosting + RSS included', 'Distribution support', 'Custom cover art (1x)']
+    },
+    studio_pod_pro: {
+      priceId: 'price_studio_pod_pro_monthly',
+      name: 'Studio Pod Pro',
+      price: 249.00,
+      category: 'Audio Edit + Host',
+      features: ['8 episodes/month', 'All editing features', 'Show notes + audiogram', 'Quarterly strategy session', 'Multi-show hosting allowed']
+    },
+    visualcast_standard: {
+      priceId: 'price_visualcast_standard_monthly',
+      name: 'VisualCast Standard',
+      price: 399.00,
+      category: 'Video + Audio Edit + Host',
+      features: ['4 episodes/month', 'Full audio + video edit', 'Lower third animations', 'Podcast hosting included', 'YouTube optimization']
+    },
+    visualcast_pro: {
+      priceId: 'price_visualcast_pro_monthly',
+      name: 'VisualCast Pro',
+      price: 699.00,
+      category: 'Video + Audio Edit + Host',
+      features: ['8 episodes/month', 'All editing features', 'Custom branding templates', 'Transcription + repurposing', 'Social media reels (2 per episode)']
     }
   };
 
@@ -221,65 +252,159 @@ export default function UploadPage() {
 
         {/* Pricing Plans */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Choose Your Creator Plan</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Choose Your Podcast Hosting Plan</h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(pricingPlans).map(([key, plan]) => (
-              <div key={key} className="border-2 border-gray-200 rounded-lg p-6 relative">
-                {key === 'pro' && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Most Popular
-                    </span>
+          {/* Hosting Only Plans */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center bg-blue-50 py-2 rounded-lg">🎧 Hosting Only Plans (DIY Podcasters)</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {Object.entries(pricingPlans).filter(([key, plan]) => plan.category.includes('Hosting Only') || plan.category.includes('Growth Plan') || plan.category.includes('Agency Creator')).map(([key, plan]) => (
+                <div key={key} className={`border-2 rounded-lg p-4 relative ${key === 'barracks_procast' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
+                  {key === 'barracks_procast' && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="text-center mb-4">
+                    <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
+                    <p className="text-xs text-gray-600 mb-2">{plan.category}</p>
+                    <div className="mt-2">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
+                      </span>
+                      <span className="text-gray-600">/month</span>
+                      {heroesDiscount && (
+                        <div className="text-sm text-green-600 font-medium">
+                          30% Heroes Discount Applied!
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
-                
-                <div className="text-center mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
-                  <div className="mt-2">
-                    <span className="text-3xl font-bold text-gray-900">
-                      ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
-                    </span>
-                    <span className="text-gray-600">/month</span>
-                    {heroesDiscount && (
-                      <div className="text-sm text-green-600 font-medium">
-                        30% Heroes Discount Applied!
-                      </div>
-                    )}
-                  </div>
+                  
+                  <ul className="space-y-1 text-sm text-gray-600 mb-4">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-green-500 mr-2 mt-0.5">•</span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <button
+                    onClick={() => handleSubscribe(key)}
+                    disabled={!creatorName.trim()}
+                    className={`w-full py-2 px-3 rounded-md font-medium transition-colors text-sm ${
+                      key === 'barracks_procast'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400'
+                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100'
+                    } disabled:cursor-not-allowed`}
+                  >
+                    {!creatorName.trim() ? 'Enter Name First' : 'Subscribe Now'}
+                  </button>
                 </div>
-                
-                <ul className="space-y-2 text-gray-600 mb-6">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <svg className="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                
-                <button
-                  onClick={() => handleSubscribe(key)}
-                  disabled={!creatorName.trim()}
-                  className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
-                    key === 'pro'
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400'
-                      : 'bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100'
-                  } disabled:cursor-not-allowed`}
-                >
-                  {!creatorName.trim() ? 'Enter Name First' : 'Subscribe Now'}
-                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Premium Edit + Host Plans */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center bg-purple-50 py-2 rounded-lg">🎙️ Premium Plans with Editing Services</h3>
+            
+            {/* Audio Edit Plans */}
+            <div className="mb-6">
+              <h4 className="text-md font-medium text-gray-700 mb-3 text-center">Audio-Only Edit + Host Plans</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                {Object.entries(pricingPlans).filter(([key, plan]) => plan.category.includes('Audio Edit')).map(([key, plan]) => (
+                  <div key={key} className="border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+                    <div className="text-center mb-4">
+                      <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
+                      <p className="text-xs text-gray-600 mb-2">{plan.category}</p>
+                      <div className="mt-2">
+                        <span className="text-2xl font-bold text-gray-900">
+                          ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
+                        </span>
+                        <span className="text-gray-600">/month</span>
+                        {heroesDiscount && (
+                          <div className="text-sm text-green-600 font-medium">
+                            30% Heroes Discount Applied!
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <ul className="space-y-1 text-sm text-gray-600 mb-4">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-purple-500 mr-2 mt-0.5">•</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <button
+                      onClick={() => handleSubscribe(key)}
+                      disabled={!creatorName.trim()}
+                      className="w-full py-2 px-3 rounded-md font-medium transition-colors text-sm bg-purple-600 text-white hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {!creatorName.trim() ? 'Enter Name First' : 'Subscribe Now'}
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Video Edit Plans */}
+            <div>
+              <h4 className="text-md font-medium text-gray-700 mb-3 text-center">Video + Audio Edit + Host Plans</h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                {Object.entries(pricingPlans).filter(([key, plan]) => plan.category.includes('Video + Audio')).map(([key, plan]) => (
+                  <div key={key} className="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                    <div className="text-center mb-4">
+                      <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
+                      <p className="text-xs text-gray-600 mb-2">{plan.category}</p>
+                      <div className="mt-2">
+                        <span className="text-2xl font-bold text-gray-900">
+                          ${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}
+                        </span>
+                        <span className="text-gray-600">/month</span>
+                        {heroesDiscount && (
+                          <div className="text-sm text-green-600 font-medium">
+                            30% Heroes Discount Applied!
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <ul className="space-y-1 text-sm text-gray-600 mb-4">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-red-500 mr-2 mt-0.5">•</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <button
+                      onClick={() => handleSubscribe(key)}
+                      disabled={!creatorName.trim()}
+                      className="w-full py-2 px-3 rounded-md font-medium transition-colors text-sm bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {!creatorName.trim() ? 'Enter Name First' : 'Subscribe Now'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
           {/* Free Tier Option */}
           <div className="mt-8 p-6 bg-gray-50 rounded-lg text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Try Before You Buy</h3>
             <p className="text-gray-600 mb-4">
-              Start with our free tier: 1 video upload, 2GB max file size
+              Start with our free tier: 1 podcast upload, 2GB max file size
             </p>
             <button
               onClick={() => setCreatorTier('free')}
@@ -302,7 +427,7 @@ export default function UploadPage() {
                 </svg>
                 <div>
                   <p className="text-yellow-800 font-medium">Free Tier Limitations</p>
-                  <p className="text-yellow-700 text-sm">Max file size: 2GB • 1 video upload only</p>
+                  <p className="text-yellow-700 text-sm">Max file size: 2GB • 1 podcast upload only</p>
                 </div>
               </div>
             </div>
@@ -310,28 +435,28 @@ export default function UploadPage() {
             <form onSubmit={handleUpload} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video Title *
+                  Podcast Title *
                 </label>
                 <input
                   type="text"
                   value={videoTitle}
                   onChange={(e) => setVideoTitle(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="Enter your video title"
+                  placeholder="Enter your podcast title"
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Video Description
+                  Podcast Description
                 </label>
                 <textarea
                   value={videoDescription}
                   onChange={(e) => setVideoDescription(e.target.value)}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="Describe your video content..."
+                  placeholder="Describe your podcast content..."
                 />
               </div>
 
@@ -350,10 +475,10 @@ export default function UploadPage() {
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Step 2: Select Video File (Max 2GB)</span>
+                  <span className="text-gray-700">Step 2: Select Audio/Video File (Max 2GB)</span>
                   <input
                     type="file"
-                    accept="video/*"
+                    accept="audio/*,video/*"
                     onChange={(e) => setFile(e.target.files[0])}
                     disabled={!uploadUrl}
                     className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
@@ -361,13 +486,13 @@ export default function UploadPage() {
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <span className="text-gray-700">Step 3: Upload Video</span>
+                  <span className="text-gray-700">Step 3: Upload Content</span>
                   <button
                     type="submit"
                     disabled={!uploadUrl || !file || uploading}
                     className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                   >
-                    {uploading ? 'Uploading...' : 'Upload Video'}
+                    {uploading ? 'Uploading...' : 'Upload Content'}
                   </button>
                 </div>
               </div>
@@ -387,11 +512,12 @@ export default function UploadPage() {
         <div className="mt-8 bg-blue-50 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">📋 Upload Guidelines</h3>
           <ul className="space-y-2 text-blue-800">
-            <li>• Supported formats: MP4, MOV, AVI, MKV</li>
-            <li>• Recommended resolution: 1080p or higher</li>
+            <li>• Supported formats: MP3, WAV, MP4, MOV, AVI, MKV</li>
+            <li>• Audio: 128kbps or higher recommended</li>
+            <li>• Video: 1080p or higher recommended</li>
             <li>• Ensure your content follows community guidelines</li>
             <li>• Processing time varies based on file size (typically 5-15 minutes)</li>
-            <li>• Videos will appear on the platform once processing is complete</li>
+            <li>• Content will appear on the platform once processing is complete</li>
             <li>• Subscribers get priority processing and support</li>
           </ul>
         </div>
