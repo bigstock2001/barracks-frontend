@@ -166,21 +166,21 @@ export default function AuthButtons() {
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md my-8 max-h-screen overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">
                 {authMode === 'login' ? 'Login' : 'Create Account'}
               </h2>
               <button
                 onClick={() => setShowAuthModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-xl"
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold w-8 h-8 flex items-center justify-center"
               >
                 ×
               </button>
             </div>
 
-            <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="space-y-4">
+            <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="space-y-4 max-w-full">
               {authMode === 'register' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -190,7 +190,7 @@ export default function AuthButtons() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                     placeholder="Your full name"
                     required
                   />
@@ -205,12 +205,12 @@ export default function AuthButtons() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                   placeholder={authMode === 'register' ? 'your@email.com (this will be your username)' : 'your@email.com'}
                   required
                 />
                 {authMode === 'register' && (
-                  <p className="text-xs text-gray-500 mt-1">Your email address will be used as your username for login</p>
+                  <p className="text-xs text-blue-600 mt-1 font-medium">📧 Your email address will be used as your username for login</p>
                 )}
               </div>
 
@@ -222,13 +222,13 @@ export default function AuthButtons() {
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                   placeholder="••••••••"
                   minLength="6"
                   required
                 />
                 {authMode === 'register' && (
-                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">🔒 Minimum 6 characters</p>
                 )}
               </div>
 
@@ -241,7 +241,7 @@ export default function AuthButtons() {
                     type="password"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base"
                     placeholder="••••••••"
                     minLength="6"
                     required
@@ -252,7 +252,7 @@ export default function AuthButtons() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed text-base"
               >
                 {loading ? 'Processing...' : (authMode === 'login' ? 'Login' : 'Create Account')}
               </button>
@@ -280,9 +280,9 @@ export default function AuthButtons() {
             )}
             
             {authMode === 'register' && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-md">
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-xs text-gray-600">
-                  <strong>Email as Username:</strong> Your email address will be your username for future logins.
+                  <strong>📧 Email as Username:</strong> Your email address will be your username for future logins.
                   You'll receive a verification email after registration.
                 </p>
               </div>
