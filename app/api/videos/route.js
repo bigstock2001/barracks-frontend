@@ -1,5 +1,5 @@
 export async function GET() {
-  console.log('=== NEW API ROUTE CALLED ===');
+  console.log('=== Videos API Route Called ===');
   
   try {
     console.log('Fetching from WordPress...');
@@ -8,29 +8,32 @@ export async function GET() {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': 'Barracks-Media-Frontend/1.0',
         'Cache-Control': 'no-cache',
       },
     });
     
     console.log('WordPress response status:', response.status);
-    console.log('WordPress response ok:', response.ok);
     
     if (!response.ok) {
-      console.log('WordPress response not ok, status:', response.status);
       const errorText = await response.text();
-      console.log('WordPress error response:', errorText);
-      return Response.json({ error: `WordPress API error: ${response.status}`, details: errorText }, { status: 500 });
+      console.error('WordPress API error:', errorText);
+      return Response.json({ 
+        error: `WordPress API error: ${response.status}`, 
+        details: errorText 
+      }, { status: 500 });
     }
     
     const data = await response.json();
-    console.log('WordPress data received, count:', data.length);
-    console.log('First video:', data[0]?.title?.rendered || 'No videos');
+    console.log('Successfully fetched', data.length, 'videos');
     
     return Response.json(data);
     
   } catch (error) {
-    console.log('API route error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('API route error:', error);
+    return Response.json({ 
+      error: 'Failed to fetch videos', 
+      details: error.message 
+    }, { status: 500 });
   }
 }
