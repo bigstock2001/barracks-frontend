@@ -288,7 +288,6 @@ export default function AuthButtons() {
               </div>
             )}
           </div>
-          </div>
         </div>
       )}
     </>
