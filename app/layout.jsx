@@ -1,6 +1,45 @@
 import AuthButtons from '../components/AuthButtons';
 import './globals.css'
 
+// Services dropdown component
+function ServicesDropdown() {
+  return (
+    <div className="relative group">
+      <button className="hover:text-yellow-400 transition-colors flex items-center">
+        Services
+        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      
+      {/* Dropdown Menu */}
+      <div className="absolute left-0 mt-2 w-56 bg-black bg-opacity-90 backdrop-blur-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+        <div className="py-2">
+          <a
+            href="/upload"
+            className="block px-4 py-2 text-sm text-white hover:bg-yellow-500 hover:text-black transition-colors"
+          >
+            🎙️ Podcast Hosting
+          </a>
+          <a
+            href="/upload/manage"
+            className="block px-4 py-2 text-sm text-white hover:bg-yellow-500 hover:text-black transition-colors"
+          >
+            ⚙️ Manage Subscription
+          </a>
+          <div className="border-t border-gray-600 my-1"></div>
+          <a
+            href="/directory"
+            className="block px-4 py-2 text-sm text-white hover:bg-yellow-500 hover:text-black transition-colors"
+          >
+            🎤 Guest Directory
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export const metadata = {
   title: 'Barracks Media - Creator Platform',
   description: 'Join the elite creator program and start earning with profit sharing',
@@ -33,9 +72,7 @@ export default function RootLayout({ children }) {
           <ul className="flex space-x-6 text-lg font-medium">
             <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
             <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
-            <li><a href="/directory" className="hover:text-yellow-400 transition-colors">Guest Directory</a></li>
-            <li><a href="/upload" className="hover:text-yellow-400 transition-colors">Upload</a></li>
-            <li><a href="/upload/manage" className="hover:text-yellow-400 transition-colors">Manage</a></li>
+            <li><ServicesDropdown /></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
             <li><a href="/account" className="hover:text-yellow-400 transition-colors">Account</a></li>
           </ul>
