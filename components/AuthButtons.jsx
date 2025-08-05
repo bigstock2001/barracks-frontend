@@ -166,9 +166,8 @@ export default function AuthButtons() {
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
-          <div className="flex min-h-full items-start justify-center p-4 pt-16">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">
                 {authMode === 'login' ? 'Login' : 'Create Account'}
@@ -289,7 +288,6 @@ export default function AuthButtons() {
               </div>
             )}
           </div>
-            </div>
           </div>
         </div>
       )}
