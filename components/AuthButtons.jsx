@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { authService } from '../lib/auth';
 
 export default function AuthButtons() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,70 +18,85 @@ export default function AuthButtons() {
 
   // Check login status on component mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('barracks_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    checkUser();
+    
+    // Listen for auth changes
+    const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        setIsLoggedIn(true);
+      } else {
+        setUser(null);
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
+
+  const checkUser = async () => {
+    const { user } = await authService.getCurrentUser();
+    if (user) {
+      setUser(user);
       setIsLoggedIn(true);
     }
-  }, []);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     
-    // Mock login - in real app, this would call your auth API
-    if (formData.email && formData.password) {
-      const mockUser = {
-        id: 1,
-        name: formData.name || formData.email.split('@')[0],
-        email: formData.email,
-        tier: 'premium',
-        loginTime: new Date().toISOString()
-      };
-      
-      localStorage.setItem('barracks_user', JSON.stringify(mockUser));
-      setUser(mockUser);
+    const { user, session, error } = await authService.signIn(formData.email, formData.password);
+    
+    if (error) {
+      alert('Login failed: ' + error);
+    } else {
+      setUser(user);
       setIsLoggedIn(true);
       setShowAuthModal(false);
       setFormData({ email: '', password: '', name: '', confirmPassword: '' });
-      
-      // Show success message
       alert('Successfully logged in!');
-    } else {
-      alert('Please fill in all required fields');
     }
+    
+    setLoading(false);
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
     
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
+      setLoading(false);
       return;
     }
     
-    if (formData.email && formData.password && formData.name) {
-      const mockUser = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        tier: 'free',
-        loginTime: new Date().toISOString()
-      };
-      
-      localStorage.setItem('barracks_user', JSON.stringify(mockUser));
-      setUser(mockUser);
+    const { user, error } = await authService.signUp(
+      formData.email, 
+      formData.password, 
+      { name: formData.name }
+    );
+    
+    if (error) {
+      alert('Registration failed: ' + error);
+    } else {
+      setUser(user);
       setIsLoggedIn(true);
       setShowAuthModal(false);
       setFormData({ email: '', password: '', name: '', confirmPassword: '' });
-      
-      alert('Account created successfully!');
-    } else {
-      alert('Please fill in all required fields');
+      alert('Account created successfully! Please check your email to verify your account.');
     }
+    
+    setLoading(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('barracks_user');
+  const handleLogout = async () => {
+    const { error } = await authService.signOut();
+    if (error) {
+      alert('Logout failed: ' + error);
+      return;
+    }
+    
     setUser(null);
     setIsLoggedIn(false);
     alert('Successfully logged out!');
@@ -95,7 +112,7 @@ export default function AuthButtons() {
     return (
       <div className="flex items-center space-x-4">
         <span className="text-sm text-gray-300">
-          Welcome, {user.name}!
+          Welcome, {user.user_metadata?.name || user.email}!
         </span>
         <a
           href="/account"
@@ -209,9 +226,10 @@ export default function AuthButtons() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+                disabled={loading}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {authMode === 'login' ? 'Login' : 'Create Account'}
+                {loading ? 'Processing...' : (authMode === 'login' ? 'Login' : 'Create Account')}
               </button>
             </form>
 
@@ -230,8 +248,8 @@ export default function AuthButtons() {
             {authMode === 'login' && (
               <div className="mt-4 p-3 bg-gray-50 rounded-md">
                 <p className="text-xs text-gray-600">
-                  <strong>Demo Mode:</strong> Use any email/password to login. 
-                  Data is stored locally for demonstration purposes.
+                  <strong>Secure Authentication:</strong> Your account is protected with Supabase authentication.
+                  You'll receive an email verification link after registration.
                 </p>
               </div>
             )}

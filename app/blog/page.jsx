@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { authService } from '../../lib/auth';
 
 export default function BlogPage() {
   const [posts, setPosts] = useState([]);
@@ -18,12 +19,15 @@ export default function BlogPage() {
   const ADMIN_EMAIL = 'ddunn@barracksmedia.com';
 
   useEffect(() => {
-    // Load user data
-    const savedUser = localStorage.getItem('barracks_user');
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      setIsAdmin(userData.email === ADMIN_EMAIL);
+    loadUserAndPosts();
+  }, []);
+
+  const loadUserAndPosts = async () => {
+    // Load user data from Supabase
+    const { user: currentUser } = await authService.getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+      setIsAdmin(currentUser.email === ADMIN_EMAIL);
     }
 
     // Load blog posts from localStorage (in real app, this would be from your backend)
@@ -82,7 +86,7 @@ export default function BlogPage() {
     }
     
     setLoading(false);
-  }, []);
+  };
 
   const handleCreatePost = (e) => {
     e.preventDefault();
@@ -98,6 +102,7 @@ export default function BlogPage() {
       excerpt: newPost.excerpt || newPost.content.substring(0, 150) + '...',
       content: newPost.content.replace(/\n/g, '<br>'),
       author: user.name,
+      author: user.user_metadata?.name || user.email.split('@')[0],
       publishDate: new Date().toISOString().split('T')[0],
       readTime: Math.ceil(newPost.content.split(' ').length / 200) + ' min read',
       tags: ['admin-post']

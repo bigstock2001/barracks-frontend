@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { authService } from '../../lib/auth';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
@@ -34,52 +36,13 @@ export default function AccountPage() {
 
   // Mock user data - in real app, this would come from your auth system
   useEffect(() => {
+    loadUserData();
+    
     // Load Stripe.js
     const script = document.createElement('script');
     script.src = 'https://js.stripe.com/v3/';
     script.async = true;
     document.body.appendChild(script);
-
-    // Simulate loading user data
-    setTimeout(() => {
-      setUser({
-        name: 'John Creator',
-        email: 'john@example.com',
-        joinDate: '2024-01-15',
-        tier: 'free' // Changed to free to show upgrade options
-      });
-
-      setSubscription({
-        status: 'inactive',
-        plan: 'Free Tier',
-        price: 0,
-        nextBilling: '2024-02-15',
-        customerId: 'cus_example123'
-      });
-
-      setViewStats({
-        totalViews: 15420,
-        monthlyViews: 3240,
-        weeklyViews: 890,
-        dailyViews: 127,
-        uniqueViewers: 8930,
-        topVideo: {
-          title: 'Military Training Basics',
-          views: 4520
-        },
-        recentViews: [
-          { date: '2024-01-20', views: 127 },
-          { date: '2024-01-19', views: 156 },
-          { date: '2024-01-18', views: 143 },
-          { date: '2024-01-17', views: 189 },
-          { date: '2024-01-16', views: 201 },
-          { date: '2024-01-15', views: 178 },
-          { date: '2024-01-14', views: 165 }
-        ]
-      });
-
-      setLoading(false);
-    }, 1000);
 
     return () => {
       const existingScript = document.querySelector('script[src="https://js.stripe.com/v3/"]');
@@ -88,6 +51,53 @@ export default function AccountPage() {
       }
     };
   }, []);
+
+  const loadUserData = async () => {
+    try {
+      const { user: currentUser } = await authService.getCurrentUser();
+      if (currentUser) {
+        setUser({
+          name: currentUser.user_metadata?.name || currentUser.email.split('@')[0],
+          email: currentUser.email,
+          joinDate: currentUser.created_at,
+          tier: currentUser.user_metadata?.tier || 'free'
+        });
+
+        setSubscription({
+          status: 'inactive',
+          plan: 'Free Tier',
+          price: 0,
+          nextBilling: '2024-02-15',
+          customerId: 'cus_example123'
+        });
+
+        setViewStats({
+          totalViews: 15420,
+          monthlyViews: 3240,
+          weeklyViews: 890,
+          dailyViews: 127,
+          uniqueViewers: 8930,
+          topVideo: {
+            title: 'Military Training Basics',
+            views: 4520
+          },
+          recentViews: [
+            { date: '2024-01-20', views: 127 },
+            { date: '2024-01-19', views: 156 },
+            { date: '2024-01-18', views: 143 },
+            { date: '2024-01-17', views: 189 },
+            { date: '2024-01-16', views: 201 },
+            { date: '2024-01-15', views: 178 },
+            { date: '2024-01-14', views: 165 }
+          ]
+        });
+      }
+    } catch (error) {
+      setError('Failed to load user data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubscribe = async (planKey) => {
     try {
@@ -156,6 +166,7 @@ export default function AccountPage() {
   }
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -476,5 +487,6 @@ export default function AccountPage() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
