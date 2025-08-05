@@ -75,15 +75,24 @@ export default function AuthButtons() {
       return;
     }
     
+    if (!formData.email || !formData.email.includes('@')) {
+      alert('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+    
     const { user, error } = await authService.signUp(
       formData.email, 
       formData.password, 
-      { name: formData.name }
+      { 
+        name: formData.name,
+        username: formData.email // Use email as username
+      }
     );
     
     if (error) {
       if (error.includes('not configured')) {
-        alert('Demo Mode: Authentication is not configured. This is a preview version.');
+        alert('Demo Mode: Registration successful!\n\nEmail: ' + formData.email + '\nThis is a preview version - authentication is not fully configured.');
       } else {
         alert('Registration failed: ' + error);
       }
@@ -92,7 +101,7 @@ export default function AuthButtons() {
       setIsLoggedIn(true);
       setShowAuthModal(false);
       setFormData({ email: '', password: '', name: '', confirmPassword: '' });
-      alert('Account created successfully! Please check your email to verify your account.');
+      alert('Account created successfully!\n\nUsername: ' + formData.email + '\n\nPlease check your email to verify your account.');
     }
     
     setLoading(false);
@@ -190,16 +199,19 @@ export default function AuthButtons() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
+                  {authMode === 'register' ? 'Email Address (Username) *' : 'Email *'}
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="your@email.com"
+                  placeholder={authMode === 'register' ? 'your@email.com (this will be your username)' : 'your@email.com'}
                   required
                 />
+                {authMode === 'register' && (
+                  <p className="text-xs text-gray-500 mt-1">Your email address will be used as your username for login</p>
+                )}
               </div>
 
               <div>
@@ -212,8 +224,12 @@ export default function AuthButtons() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   placeholder="••••••••"
+                  minLength="6"
                   required
                 />
+                {authMode === 'register' && (
+                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                )}
               </div>
 
               {authMode === 'register' && (
@@ -227,6 +243,7 @@ export default function AuthButtons() {
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     placeholder="••••••••"
+                    minLength="6"
                     required
                   />
                 </div>
@@ -247,8 +264,8 @@ export default function AuthButtons() {
                 className="text-blue-600 hover:text-blue-800 text-sm"
               >
                 {authMode === 'login' 
-                  ? "Don't have an account? Register here" 
-                  : "Already have an account? Login here"
+                  ? "Don't have an account? Create one here" 
+                  : "Already have an account? Login with your email"
                 }
               </button>
             </div>
@@ -256,8 +273,17 @@ export default function AuthButtons() {
             {authMode === 'login' && (
               <div className="mt-4 p-3 bg-gray-50 rounded-md">
                 <p className="text-xs text-gray-600">
-                  <strong>Secure Authentication:</strong> Your account is protected with Supabase authentication.
-                  You'll receive an email verification link after registration.
+                  <strong>Login with Email:</strong> Use your email address as your username.
+                  Your account is protected with secure authentication.
+                </p>
+              </div>
+            )}
+            
+            {authMode === 'register' && (
+              <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                <p className="text-xs text-gray-600">
+                  <strong>Email as Username:</strong> Your email address will be your username for future logins.
+                  You'll receive a verification email after registration.
                 </p>
               </div>
             )}
