@@ -1,36 +1,18 @@
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
   try {
+    // For now, return a mock response until Stripe is properly configured
     const { priceId, customerEmail, heroesDiscount = false } = await request.json();
-
-    // Create checkout session
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      customer_email: customerEmail,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      discounts: heroesDiscount ? [
-        {
-          coupon: 'HEROES30', // 30% off for veterans/teachers/first responders
-        },
-      ] : [],
-      success_url: `${request.headers.get('origin')}/upload/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${request.headers.get('origin')}/upload`,
-      metadata: {
-        heroesDiscount: heroesDiscount.toString(),
-      },
+    
+    console.log('Checkout session requested:', { priceId, customerEmail, heroesDiscount });
+    
+    // In production, this would create a real Stripe session
+    return NextResponse.json({ 
+      sessionId: 'mock_session_id',
+      message: 'Stripe integration pending - contact support to complete subscription'
     });
-
-    return NextResponse.json({ sessionId: session.id });
+    
   } catch (error) {
     console.error('Error creating checkout session:', error);
     return NextResponse.json(

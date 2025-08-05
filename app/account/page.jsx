@@ -105,23 +105,10 @@ export default function AccountPage() {
   const handleSubscribe = async (planKey) => {
     try {
       const plan = pricingPlans[planKey];
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: plan.priceId,
-          customerEmail: user.email,
-          heroesDiscount,
-        }),
-      });
-
-      const { sessionId } = await response.json();
       
-      // Redirect to Stripe Checkout
-      const stripe = window.Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-      await stripe.redirectToCheckout({ sessionId });
+      // For demo purposes, show alert instead of actual payment
+      alert(`Upgrading to: ${plan.name} - $${heroesDiscount ? (plan.price * 0.7).toFixed(2) : plan.price}/month\n\nPayment integration coming soon! Contact support to complete upgrade.`);
+      
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to start checkout. Please try again.');
@@ -130,16 +117,7 @@ export default function AccountPage() {
 
   const handleManageSubscription = async () => {
     try {
-      const response = await fetch('/api/create-portal-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ customerId: subscription.customerId }),
-      });
-
-      const { url } = await response.json();
-      window.location.href = url;
+      alert('Billing portal coming soon! Contact support to manage your subscription.');
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to open billing portal. Please try again.');
