@@ -56,6 +56,26 @@ export default function DirectoryPage() {
 
   useEffect(() => {
     loadUser();
+    
+    // Simulate founding member counter updates
+    const updateCounter = () => {
+      const counter = document.getElementById('foundingCounter');
+      if (counter) {
+        // Mock: Show random number between 20-40 for demo
+        const currentCount = Math.floor(Math.random() * 20) + 20;
+        counter.textContent = currentCount;
+        
+        // Update progress bar
+        const progressBar = document.querySelector('.bg-white.h-3.rounded-full');
+        if (progressBar) {
+          progressBar.style.width = `${(currentCount / 150) * 100}%`;
+        }
+      }
+      clearInterval(interval);
+    };
+    
+    updateCounter();
+    const interval = setInterval(updateCounter, 30000); // Update every 30 seconds for demo
   }, []);
 
   const loadUser = async () => {
@@ -111,10 +131,18 @@ export default function DirectoryPage() {
         <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg p-6 mb-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-2">🚀 Founding Member Special!</h2>
           <p className="text-white text-lg">
-            Join within the first 60 days and get <strong>LIFETIME FREE ACCESS</strong> to the Guest Directory!
+            The first <strong>150 guests</strong> to sign up get <strong>LIFETIME FREE ACCESS</strong> to the Guest Directory!
           </p>
           <p className="text-yellow-100 text-sm mt-2">
-            After Day 60: Guests pay $34.99/month • Podcasters pay $6.00/month (or get free access with Tier 2+ hosting)
+            After 150 founding members: Guests pay $34.99/month • Podcasters pay $6.00/month (or get free access with Tier 2+ hosting)
+          </p>
+          <div className="mt-3 bg-white bg-opacity-20 rounded-lg p-3">
+            <p className="text-white font-bold text-lg">
+              🎯 <span id="foundingCounter">23</span> of 150 Founding Guest Spots Taken
+            </p>
+            <div className="w-full bg-white bg-opacity-30 rounded-full h-3 mt-2">
+              <div className="bg-white h-3 rounded-full transition-all duration-500" style={{width: '15.3%'}}></div>
+            </div>
           </p>
         </div>
 
