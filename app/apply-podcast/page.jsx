@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { authService } from '../../lib/auth';
 
 export default function ApplyPodcastPage() {
+  const [user, setUser] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState('');
   const [formData, setFormData] = useState({
     applicantName: '',
     podcastTitle: '',
@@ -15,6 +18,68 @@ export default function ApplyPodcastPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('');
   const [errors, setErrors] = useState({});
+  const [step, setStep] = useState(1); // 1: Plan Selection, 2: Form, 3: Payment
+
+  // Pricing plans
+  const plans = [
+    {
+      id: 'starter',
+      name: 'Starter',
+      price: 19.99,
+      priceId: 'price_starter_podcast', // Replace with actual Stripe price ID
+      features: [
+        '10GB storage',
+        '1 active podcast',
+        'RSS feed & directory submission',
+        'Basic analytics',
+        'Free Guest Directory access'
+      ]
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: 39.99,
+      priceId: 'price_pro_podcast', // Replace with actual Stripe price ID
+      features: [
+        '50GB storage',
+        '3 active podcasts',
+        'Advanced analytics',
+        'White-label options',
+        'Priority support'
+      ],
+      popular: true
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      price: 69.99,
+      priceId: 'price_premium_podcast', // Replace with actual Stripe price ID
+      features: [
+        '100GB storage',
+        '5 active podcasts',
+        'Advanced analytics',
+        'White-label options',
+        'Priority support',
+        'Custom branding'
+      ]
+    }
+  ];
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    const { user: currentUser } = await authService.getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+      setFormData(prev => ({
+        ...prev,
+        applicantName: currentUser.user_metadata?.name || '',
+        applicantEmail: currentUser.email
+      }));
+    }
+  };
 
   const genres = [
     'military',
@@ -78,7 +143,7 @@ export default function ApplyPodcastPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -87,45 +152,71 @@ export default function ApplyPodcastPage() {
     }
     
     setLoading(true);
-    setStatus('📝 Creating your podcast...');
+    setStatus('💳 Processing payment...');
     
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: plans.find(p => p.id === selectedPlan)?.priceId,
+          customerEmail: formData.applicantEmail,
+          podcastData: formData // Pass podcast data to be stored in session metadata
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        // Redirect to Stripe Checkout
+        if (result.url) {
+          window.location.href = result.url;
+        } else {
+          setStatus('🎉 Payment processed! Creating your podcast...');
+          // For demo mode, create podcast directly
+          await createPodcast();
+        }
+        
+      } else {
+        setStatus(`❌ Error: ${result.error || 'Payment failed'}`);
+      }
+      
+    } catch (error) {
+      console.error('Payment error:', error);
+      setStatus('❌ Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPodcast = async () => {
     try {
       const response = await fetch('/api/create-podcast-entry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          selectedPlan
+        }),
       });
       
       const result = await response.json();
       
       if (response.ok) {
         setStatus('🎉 Success! Your podcast has been created successfully!');
-        // Reset form
-        setFormData({
-          applicantName: '',
-          podcastTitle: '',
-          genre: '',
-          rssOption: '',
-          rssUrl: '',
-          applicantEmail: ''
-        });
-        
-        // Redirect to success page after 3 seconds
         setTimeout(() => {
           window.location.href = '/upload/success';
         }, 3000);
-        
       } else {
         setStatus(`❌ Error: ${result.error || 'Failed to create podcast'}`);
       }
-      
     } catch (error) {
-      console.error('Submission error:', error);
-      setStatus('❌ Network error. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('Podcast creation error:', error);
+      setStatus('❌ Failed to create podcast. Please contact support.');
     }
   };
 
@@ -142,13 +233,108 @@ export default function ApplyPodcastPage() {
           </p>
         </div>
 
-        {/* Application Form */}
+        {/* Step 1: Plan Selection */}
+        {step === 1 && (
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+              Choose Your Podcast Hosting Plan
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {plans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
+                    selectedPlan === plan.id
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300'
+                  } ${plan.popular ? 'relative' : ''}`}
+                  onClick={() => setSelectedPlan(plan.id)}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    <div className="text-3xl font-bold text-blue-600 mb-2">${plan.price}</div>
+                    <div className="text-gray-500">per month</div>
+                  </div>
+                  
+                  <ul className="space-y-2 mb-6">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center text-sm">
+                        <svg className="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="text-center">
+                    <div className={`w-4 h-4 rounded-full border-2 mx-auto ${
+                      selectedPlan === plan.id
+                        ? 'bg-blue-500 border-blue-500'
+                        : 'border-gray-300'
+                    }`}>
+                      {selectedPlan === plan.id && (
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setStep(2)}
+                disabled={!selectedPlan}
+                className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-semibold"
+              >
+                Continue with {selectedPlan ? plans.find(p => p.id === selectedPlan)?.name : 'Selected'} Plan
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Application Form */}
+        {step === 2 && (
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            Podcast Application Form
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Podcast Details
+            </h2>
+            <button
+              onClick={() => setStep(1)}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              ← Change Plan
+            </button>
+          </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Selected Plan Summary */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-blue-900">
+                  {plans.find(p => p.id === selectedPlan)?.name} Plan
+                </h3>
+                <p className="text-blue-700 text-sm">
+                  ${plans.find(p => p.id === selectedPlan)?.price}/month
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -290,7 +476,7 @@ export default function ApplyPodcastPage() {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-semibold"
             >
-              {loading ? '📝 Creating Podcast...' : '🚀 Submit Application'}
+              {loading ? '💳 Processing Payment...' : '💳 Proceed to Payment'}
             </button>
 
             {/* Status Message */}
@@ -307,19 +493,22 @@ export default function ApplyPodcastPage() {
             )}
           </form>
         </div>
+        )}
 
         {/* Information Section */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        {step === 2 && (
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">
             📋 What Happens Next?
           </h3>
           <div className="text-blue-800 space-y-2">
-            <p>1. <strong>Application Review:</strong> We'll review your application within 24 hours</p>
-            <p>2. <strong>Podcast Setup:</strong> Your podcast will be automatically created in our system</p>
-            <p>3. <strong>RSS Feed:</strong> We'll handle RSS feed setup or transfer based on your selection</p>
-            <p>4. <strong>Welcome Email:</strong> You'll receive login credentials and next steps via email</p>
+            <p>1. <strong>Secure Payment:</strong> Complete payment via Stripe checkout</p>
+            <p>2. <strong>Instant Setup:</strong> Your podcast is automatically created upon payment</p>
+            <p>3. <strong>RSS Feed:</strong> We'll handle RSS feed setup or transfer immediately</p>
+            <p>4. <strong>Welcome Email:</strong> You'll receive login credentials and next steps</p>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

@@ -40,25 +40,28 @@ export async function POST(request) {
 Podcast Application Details:
 
 Host Name: ${formData.applicantName}
+Selected Plan: ${formData.selectedPlan || 'Not specified'}
 Genre: ${formData.genre}
 RSS Feed Option: ${formData.rssOption === 'transfer' ? 'Transferring existing feed' : 'Creating new feed'}
 ${formData.rssUrl ? `Current RSS URL: ${formData.rssUrl}` : ''}
 Contact Email: ${formData.applicantEmail}
 
 Application submitted: ${new Date().toLocaleString()}
+Payment Status: Completed
     `.trim();
     
     // Prepare WordPress post data
     const postData = {
       title: formData.podcastTitle,
       content: podcastDescription,
-      status: 'draft', // Start as draft for review
+      status: 'publish', // Publish immediately since payment is completed
       meta: {
         // Common meta fields that might be used by Seriously Simple Podcasting
         podcast_host: formData.applicantName,
         podcast_genre: formData.genre,
         podcast_email: formData.applicantEmail,
         rss_option: formData.rssOption,
+        selected_plan: formData.selectedPlan,
         ...(formData.rssUrl && { current_rss_url: formData.rssUrl })
       }
     };

@@ -39,18 +39,19 @@ export default function SuccessPage() {
           </div>
           
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            🎉 Welcome to Barracks Media!
+            🎉 Welcome to Barracks Media Podcast Network!
           </h1>
           
           <p className="text-lg text-gray-600 mb-6">
-            Your subscription has been activated successfully. You can now start uploading content!
+            Your podcast hosting plan has been activated successfully. Your podcast has been created and is ready to go!
           </p>
           
           <div className="bg-blue-50 rounded-lg p-6 mb-6">
             <h2 className="text-xl font-semibold text-blue-900 mb-3">What's Next?</h2>
             <ul className="text-left text-blue-800 space-y-2">
-              <li>• Start uploading your videos</li>
-              <li>• Access premium features</li>
+              <li>• Access your podcast dashboard</li>
+              <li>• Upload your first episode</li>
+              <li>• Configure your RSS feed settings</li>
               <li>• Manage your subscription anytime</li>
               <li>• Get priority support</li>
             </ul>
@@ -58,10 +59,10 @@ export default function SuccessPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/upload"
+              href="/account"
               className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
             >
-              Start Uploading
+              Access Dashboard
             </a>
             <a
               href="/upload/manage"
