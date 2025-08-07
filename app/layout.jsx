@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
       <body
         style={{
           backgroundImage:
-            'url("https://www.backend.barracksmedia.com/wp-content/uploads/2025/08/Untitled-design-22.png")',
+            'url("https://backend.barracksmedia.com/wp-content/uploads/2025/08/Untitled-design-31.png")',
           backgroundSize: 'cover',
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
