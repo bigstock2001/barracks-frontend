@@ -4,7 +4,7 @@ export async function GET() {
   try {
     console.log('Fetching videos from WordPress API...');
     
-    const response = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
+    const response = await fetch('https://www.backend.barracksmedia.com/wp-json/wp/v2/video?per_page=100', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
