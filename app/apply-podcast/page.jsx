@@ -24,43 +24,52 @@ export default function ApplyPodcastPage() {
   const plans = [
     {
       id: 'starter',
-      name: 'Starter',
-      price: 19.99,
+      name: 'Essentials',
+      price: 39.99,
       priceId: 'price_starter_podcast', // Replace with actual Stripe price ID
       features: [
-        '10GB storage',
-        '1 active podcast',
+        'Unlimited Podcasts and Episodes',
+        'Unlimited Downloads',
+        'Up to 10 Transcript Credits per month',
+        'In-Depth Listener Analytics',
+        'Automatic distribution to all podcast directories',
+        'Up to 100 Private Subscribers',
         'RSS feed & directory submission',
-        'Basic analytics',
         'Free Guest Directory access'
       ]
     },
     {
       id: 'pro',
-      name: 'Pro',
-      price: 39.99,
+      name: 'Growth',
+      price: 69.99,
       priceId: 'price_pro_podcast', // Replace with actual Stripe price ID
       features: [
-        '50GB storage',
-        '3 active podcasts',
-        'Advanced analytics',
-        'White-label options',
-        'Priority support'
+        'Video Republishing to YouTube',
+        'Advanced Analytics with Customizable Reports',
+        'Headliner Audiogram Integration',
+        'Up to 25 Transcript Credits per month',
+        'Add up to 5 Team Members',
+        'Mobile App for Private Subscribers',
+        'Personalized Migration Assistance From Your Current Host',
+        'Up to 250 Private Subscribers',
+        'Free Guest Directory access'
       ],
       popular: true
     },
     {
       id: 'premium',
-      name: 'Premium',
-      price: 69.99,
+      name: 'Pro',
+      price: 119.99,
       priceId: 'price_premium_podcast', // Replace with actual Stripe price ID
       features: [
-        '100GB storage',
-        '5 active podcasts',
-        'Advanced analytics',
-        'White-label options',
-        'Priority support',
-        'Custom branding'
+        'Video File Hosting',
+        'Up to 100 Transcript Credits per month',
+        'Add up to 10 Team Members',
+        'White-labeled Podcast Players',
+        '1:1 Onboarding Call With Our Team',
+        'Up to 500 Private Subscribers',
+        '(Add 500 extra for $50/month)',
+        'Free Guest Directory access'
       ]
     }
   ];
