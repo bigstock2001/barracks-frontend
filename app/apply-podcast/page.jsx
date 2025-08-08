@@ -179,12 +179,15 @@ export default function ApplyPodcastPage() {
       const result = await response.json();
       
       if (response.ok) {
-        // Redirect to Stripe Checkout
-        if (result.url) {
+        // Check if we got a Stripe checkout URL or demo mode response
+        if (result.url && result.url.includes('checkout.stripe.com')) {
           window.location.href = result.url;
-        } else {
+        } else if (result.success) {
           setStatus('🎉 Payment processed! Creating your podcast...');
           // For demo mode, create podcast directly
+          await createPodcast();
+        } else {
+          setStatus('🎉 Demo Mode: Creating your podcast directly...');
           await createPodcast();
         }
         

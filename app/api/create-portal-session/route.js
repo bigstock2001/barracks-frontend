@@ -6,6 +6,17 @@ export async function POST(request) {
     
     console.log('Portal session requested for customer:', customerId);
     
+    // Check if Stripe is configured
+    if (!process.env.STRIPE_SECRET_KEY || 
+        process.env.STRIPE_SECRET_KEY === 'your_stripe_secret_key_here' ||
+        process.env.STRIPE_SECRET_KEY === '') {
+      console.log('Demo mode: Stripe not configured');
+      return NextResponse.json({ 
+        url: '/account',
+        message: 'Demo mode: Billing portal not available'
+      });
+    }
+    
     // For now, redirect to account page
     return NextResponse.json({ 
       url: '/account',

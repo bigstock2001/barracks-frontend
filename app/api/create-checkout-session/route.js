@@ -7,7 +7,10 @@ export async function POST(request) {
     console.log('Checkout session requested:', { priceId, customerEmail, heroesDiscount, podcastData });
     
     // For demo mode - if no Stripe keys configured, create podcast directly
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'your_stripe_secret_key_here') {
+    if (!process.env.STRIPE_SECRET_KEY || 
+        process.env.STRIPE_SECRET_KEY === 'your_stripe_secret_key_here' ||
+        process.env.STRIPE_SECRET_KEY === '' ||
+        process.env.STRIPE_SECRET_KEY.startsWith('sk_test_') === false) {
       console.log('Demo mode: Creating podcast directly without payment');
       
       // Create the podcast entry directly
