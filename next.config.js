@@ -3,6 +3,3 @@ const nextConfig = {
   images: {
     domains: ['backend.barracksmedia.com', 'images.pexels.com'],
   },
-  env: {
-  }
-}
