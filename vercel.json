@@ -6,6 +6,11 @@
       "use": "@vercel/next"
     }
   ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",
