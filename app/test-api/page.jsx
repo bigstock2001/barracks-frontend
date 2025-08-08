@@ -13,7 +13,7 @@ export default function TestApiPage() {
     try {
       // Test 1: Check if WordPress site is accessible
       console.log('Testing WordPress site accessibility...');
-      const siteResponse = await fetch('https://backend.barracksmedia.com/wp-json/', {
+      const siteResponse = await fetch('https://www.backend.barracksmedia.com/wp-json/', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -33,7 +33,7 @@ export default function TestApiPage() {
       
       // Test 2: Check available post types
       console.log('Testing available post types...');
-      const typesResponse = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/types', {
+      const typesResponse = await fetch('https://www.backend.barracksmedia.com/wp-json/wp/v2/types', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -53,7 +53,7 @@ export default function TestApiPage() {
       
       // Test 3: Try to fetch videos
       console.log('Testing video endpoint...');
-      const videoResponse = await fetch('https://backend.barracksmedia.com/wp-json/wp/v2/video?per_page=5', {
+      const videoResponse = await fetch('https://www.backend.barracksmedia.com/wp-json/wp/v2/video?per_page=5', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',

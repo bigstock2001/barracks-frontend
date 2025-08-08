@@ -63,8 +63,8 @@ export default function UploadPage() {
             </div>
             
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
-              <div className="text-4xl font-bold text-blue-600 mb-2">$19.99</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Essentials</h3>
+              <div className="text-4xl font-bold text-blue-600 mb-2">$39.99</div>
               <div className="text-gray-500">per month</div>
             </div>
             
@@ -73,13 +73,13 @@ export default function UploadPage() {
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                10GB storage
+                Unlimited Podcasts and Episodes
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                1 active podcast
+                Unlimited Downloads
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@ export default function UploadPage() {
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Basic analytics
+                In-Depth Listener Analytics
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,15 +102,15 @@ export default function UploadPage() {
             </ul>
             
             <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-semibold">
-              Choose Starter
+              Choose Essentials
             </button>
           </div>
 
           {/* Pro Plan */}
           <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
-              <div className="text-4xl font-bold text-purple-600 mb-2">$39.99</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Growth</h3>
+              <div className="text-4xl font-bold text-purple-600 mb-2">$69.99</div>
               <div className="text-gray-500">per month</div>
             </div>
             
@@ -119,36 +119,36 @@ export default function UploadPage() {
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                50GB storage
+                Video Republishing to YouTube
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                3 active podcasts
+                Advanced Analytics with Customizable Reports
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Advanced analytics
+                Up to 25 Transcript Credits per month
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                White-label options
+                Add up to 5 Team Members
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Priority support
+                Free Guest Directory access
               </li>
             </ul>
             
             <button className="w-full bg-purple-600 text-white py-3 px-6 rounded-md hover:bg-purple-700 transition-colors font-semibold">
-              Choose Pro
+              Choose Growth
             </button>
           </div>
         </div>

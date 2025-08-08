@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
       <body
         style={{
           backgroundImage:
-            'url("https://backend.barracksmedia.com/wp-content/uploads/2025/08/Untitled-design-22.png")',
+            'url("https://backend.barracksmedia.com/wp-content/uploads/2025/08/Untitled-design-31.png")',
           backgroundSize: 'cover',
           backgroundAttachment: 'fixed',
           backgroundPosition: 'center',
@@ -73,6 +73,7 @@ export default function RootLayout({ children }) {
             <li><a href="/" className="hover:text-yellow-400 transition-colors">Home</a></li>
             <li><a href="/content" className="hover:text-yellow-400 transition-colors">Content</a></li>
             <li><ServicesDropdown /></li>
+            <li><a href="/apply-podcast" className="hover:text-yellow-400 transition-colors">Apply for Podcast</a></li>
             <li><a href="/messages" className="hover:text-yellow-400 transition-colors">Messages</a></li>
             <li><a href="/blog" className="hover:text-yellow-400 transition-colors">Blog</a></li>
           </ul>
