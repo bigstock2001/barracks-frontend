@@ -146,7 +146,7 @@ export default function HomePage() {
               🚀 How to Start Your Podcast
             </h2>
             <p className="text-xl text-gray-300">
-              Join podcasters who trust Barracks Media for their hosting and production needs
+              Join podcasters who trust Barracks Media for their hosting needs
             </p>
           </div>
 
