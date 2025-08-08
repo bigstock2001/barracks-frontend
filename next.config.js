@@ -4,6 +4,3 @@ const nextConfig = {
     domains: ['backend.barracksmedia.com', 'images.pexels.com'],
   },
   env: {
-    CUSTOM_KEY: 'my-value',
-  },
-}
