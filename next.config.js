@@ -6,3 +6,4 @@ const nextConfig = {
   env: {
     CUSTOM_KEY: 'my-value',
   },
+}
